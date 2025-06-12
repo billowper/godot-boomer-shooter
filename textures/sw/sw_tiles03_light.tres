@@ -1,0 +1,12 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://b75flin617jo"]
+
+[ext_resource type="Texture2D" uid="uid://chx1vyej7eas4" path="res://textures/sw/sw_tiles03_light.png" id="1_4bl8p"]
+[ext_resource type="Texture2D" uid="uid://d4irn80kj27q5" path="res://textures/sw/sw_tiles03_light_em.png" id="2_8mk6y"]
+
+[resource]
+albedo_texture = ExtResource("1_4bl8p")
+metallic_specular = 0.0
+emission_enabled = true
+emission_energy_multiplier = 3.85
+emission_texture = ExtResource("2_8mk6y")
+texture_filter = 2

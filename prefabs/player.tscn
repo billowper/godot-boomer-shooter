@@ -1,0 +1,52 @@
+[gd_scene load_steps=7 format=3 uid="uid://mi8p45wgcyc5"]
+
+[ext_resource type="Script" uid="uid://b5oy5evtvmf61" path="res://scripts/char_ctrl.gd" id="1_1txc5"]
+[ext_resource type="Script" uid="uid://b2une4s4vjs5w" path="res://scripts/fps_camera.gd" id="2_ht1c8"]
+[ext_resource type="Script" uid="uid://sipuedcb1j6y" path="res://scripts/player_audio.gd" id="3_g2jcq"]
+[ext_resource type="AudioStream" uid="uid://dj3twgkeo5nn4" path="res://sounds/jump.wav" id="4_u51tk"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_0wwdq"]
+height = 1.85
+radius = 0.35
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_wchxy"]
+height = 0.85
+radius = 0.35
+
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("fps_camera", "collision_default", "collision_crouched")]
+script = ExtResource("1_1txc5")
+gravity = 15.0
+walk_speed = 4.0
+run_speed = 7.0
+crouch_speed = 3.0
+stop_speed = 5.0
+acceleration = 10.0
+jump_velocity = 1.5
+mouse_look_sensitivity = 0.3
+joypad_sensitivity = 5.0
+crouch_camera_offset = 0.75
+step_height = 0.25
+step_safe_margin = 0.01
+fps_camera = NodePath("Camera3D")
+collision_default = NodePath("CollisionDefault")
+collision_crouched = NodePath("CollisionCrouched")
+
+[node name="CollisionDefault" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.925, 0)
+shape = SubResource("CylinderShape3D_0wwdq")
+
+[node name="CollisionCrouched" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.425, 0)
+shape = SubResource("CylinderShape3D_wchxy")
+
+[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("player_character")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+script = ExtResource("2_ht1c8")
+strafe_lean_range = 2.0
+strafe_lean_speed = 20.0
+player_character = NodePath("..")
+
+[node name="PlayerAudio" type="AudioStreamPlayer2D" parent="." node_paths=PackedStringArray("player_character")]
+script = ExtResource("3_g2jcq")
+player_character = NodePath("..")
+jump_sound = ExtResource("4_u51tk")
