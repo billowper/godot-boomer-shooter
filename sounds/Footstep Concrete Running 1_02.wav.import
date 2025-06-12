@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://j2l844kus7m3"
+path="res://.godot/imported/Footstep Concrete Running 1_02.wav-01dfd45b7fae992a3b2ae55beedee71a.sample"
+
+[deps]
+
+source_file="res://sounds/Footstep Concrete Running 1_02.wav"
+dest_files=["res://.godot/imported/Footstep Concrete Running 1_02.wav-01dfd45b7fae992a3b2ae55beedee71a.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

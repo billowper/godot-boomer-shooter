@@ -1,9 +1,16 @@
-[gd_scene load_steps=7 format=3 uid="uid://mi8p45wgcyc5"]
+[gd_scene load_steps=17 format=3 uid="uid://bb1sf2r0q6rho"]
 
-[ext_resource type="Script" uid="uid://b5oy5evtvmf61" path="res://scripts/player_controller.gd" id="1_1txc5"]
+[ext_resource type="Script" uid="uid://b5oy5evtvmf61" path="res://scripts/character_controller.gd" id="1_yenwa"]
 [ext_resource type="Script" uid="uid://b2une4s4vjs5w" path="res://scripts/fps_camera.gd" id="2_ht1c8"]
-[ext_resource type="Script" uid="uid://sipuedcb1j6y" path="res://scripts/player_audio.gd" id="3_g2jcq"]
-[ext_resource type="AudioStream" uid="uid://dj3twgkeo5nn4" path="res://sounds/jump.wav" id="4_u51tk"]
+[ext_resource type="Script" uid="uid://sipuedcb1j6y" path="res://scripts/player_audio.gd" id="3_lr3r1"]
+[ext_resource type="AudioStream" uid="uid://dj3twgkeo5nn4" path="res://sounds/jump.wav" id="4_ibnrw"]
+[ext_resource type="Script" uid="uid://cwjmee3wssfo" path="res://scripts/player_inputs.gd" id="5_ht1c8"]
+[ext_resource type="AudioStream" uid="uid://defshh1hlwu1d" path="res://sounds/Footstep Concrete Running 1_01.wav" id="6_8rb0w"]
+[ext_resource type="Script" uid="uid://bqaanw7y63xfx" path="res://scripts/health.gd" id="6_qjahl"]
+[ext_resource type="AudioStream" uid="uid://j2l844kus7m3" path="res://sounds/Footstep Concrete Running 1_02.wav" id="7_sd3sa"]
+[ext_resource type="AudioStream" uid="uid://cgl22nkoy1hqk" path="res://sounds/Footstep Concrete Running 1_03.wav" id="8_m2qjg"]
+[ext_resource type="AudioStream" uid="uid://ch54p3lv22pde" path="res://sounds/Footstep Concrete Running 1_04.wav" id="9_llb5v"]
+[ext_resource type="AudioStream" uid="uid://dqh07ks71o1ri" path="res://sounds/Footstep Concrete Running 1_05.wav" id="10_x0bak"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_0wwdq"]
 height = 1.85
@@ -13,21 +20,34 @@ radius = 0.35
 height = 0.85
 radius = 0.35
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("fps_camera", "collision_default", "collision_crouched")]
-script = ExtResource("1_1txc5")
+[sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_8rb0w"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_lulei"]
+streams_count = 5
+stream_0/stream = ExtResource("6_8rb0w")
+stream_1/stream = ExtResource("7_sd3sa")
+stream_2/stream = ExtResource("8_m2qjg")
+stream_3/stream = ExtResource("9_llb5v")
+stream_4/stream = ExtResource("10_x0bak")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_8rb0w"]
+streams_count = 4
+stream_0/stream = ExtResource("6_8rb0w")
+stream_1/stream = ExtResource("7_sd3sa")
+stream_2/stream = ExtResource("8_m2qjg")
+stream_3/stream = ExtResource("9_llb5v")
+
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("collision_default", "collision_crouched")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+script = ExtResource("1_yenwa")
 gravity = 15.0
-walk_speed = 4.0
-run_speed = 7.0
-crouch_speed = 3.0
+walk_speed = 3.5
+crouch_speed = 2.5
 stop_speed = 5.0
 acceleration = 10.0
 jump_velocity = 1.5
-mouse_look_sensitivity = 0.3
-joypad_sensitivity = 5.0
-crouch_camera_offset = 0.75
 step_height = 0.25
 step_safe_margin = 0.01
-fps_camera = NodePath("Camera3D")
 collision_default = NodePath("CollisionDefault")
 collision_crouched = NodePath("CollisionCrouched")
 
@@ -46,7 +66,21 @@ strafe_lean_range = 2.0
 strafe_lean_speed = 20.0
 player_character = NodePath("..")
 
-[node name="PlayerAudio" type="AudioStreamPlayer2D" parent="." node_paths=PackedStringArray("player_character")]
-script = ExtResource("3_g2jcq")
-player_character = NodePath("..")
-jump_sound = ExtResource("4_u51tk")
+[node name="PlayerAudio" type="AudioStreamPlayer3D" parent="Camera3D" node_paths=PackedStringArray("player_character")]
+stream = SubResource("AudioStreamPolyphonic_8rb0w")
+script = ExtResource("3_lr3r1")
+player_character = NodePath("../..")
+jump_sound = ExtResource("4_ibnrw")
+landed_sound = SubResource("AudioStreamRandomizer_lulei")
+footstep_sound = SubResource("AudioStreamRandomizer_8rb0w")
+
+[node name="PlayerInputs" type="Node3D" parent="." node_paths=PackedStringArray("player_controller", "fps_camera")]
+script = ExtResource("5_ht1c8")
+player_controller = NodePath("..")
+fps_camera = NodePath("../Camera3D")
+joypad_sensitivity = 5.0
+crouch_camera_offset = 0.75
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("6_qjahl")
+metadata/_custom_type_script = "uid://bqaanw7y63xfx"

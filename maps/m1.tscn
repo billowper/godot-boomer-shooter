@@ -1,4 +1,4 @@
-[gd_scene load_steps=261 format=4 uid="uid://cb1dfpqib62ib"]
+[gd_scene load_steps=263 format=4 uid="uid://cb1dfpqib62ib"]
 
 [ext_resource type="Script" uid="uid://c2xsrwkajwuhq" path="res://addons/func_godot/src/map/func_godot_map.gd" id="1_0ach5"]
 [ext_resource type="Resource" uid="uid://bkhxcqsquw1yg" path="res://addons/func_godot/func_godot_default_map_settings.tres" id="2_m0bq0"]
@@ -12,7 +12,8 @@
 [ext_resource type="Material" uid="uid://b75flin617jo" path="res://textures/sw/sw_tiles03_light.tres" id="10_20jp0"]
 [ext_resource type="Material" uid="uid://cbrgxheg66mp" path="res://textures/sw/sw_grate01.tres" id="11_lt885"]
 [ext_resource type="Texture2D" uid="uid://v24g4aa6kbv" path="res://sky/Panorama_Sky_18-512x512.png" id="12_e50gq"]
-[ext_resource type="PackedScene" uid="uid://mi8p45wgcyc5" path="res://prefabs/player.tscn" id="13_t1dhp"]
+[ext_resource type="Script" uid="uid://iq178sv0uotu" path="res://scripts/ledge_detection_settings.gd" id="14_o4wcg"]
+[ext_resource type="PackedScene" uid="uid://bb1sf2r0q6rho" path="res://prefabs/player.tscn" id="14_oyt15"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_t1dhp"]
 albedo_texture = ExtResource("3_3rniv")
@@ -962,6 +963,18 @@ dof_blur_near_distance = 1.0
 auto_exposure_min_sensitivity = 200.0
 auto_exposure_max_sensitivity = 1200.0
 
+[sub_resource type="Resource" id="Resource_oyt15"]
+script = ExtResource("14_o4wcg")
+min_ledge_width = 1.0
+max_surface_raycast_steps = 30
+max_surface_raycast_step_interval = 0.1
+overhang_check_height = 4.0
+min_distance_to_ground = 0.05
+clearance_height = 1.5
+obstruction_check_size = 0.1
+obstruction_layers = 1
+metadata/_custom_type_script = "uid://iq178sv0uotu"
+
 [node name="Node3D" type="Node3D"]
 
 [node name="FuncGodotMap" type="Node3D" parent="."]
@@ -1698,5 +1711,8 @@ shadow_bias = 0.002
 shadow_normal_bias = 2.62
 shadow_reverse_cull_face = true
 
-[node name="Player" parent="." instance=ExtResource("13_t1dhp")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -10, 0, 0)
+[node name="Player" parent="." instance=ExtResource("14_oyt15")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -9.8369, 0.0775509, -0.210669)
+step_height = 0.3
+step_offset = 0.05
+ledge_detection_settings = SubResource("Resource_oyt15")
