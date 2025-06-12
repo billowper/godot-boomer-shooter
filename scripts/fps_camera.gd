@@ -3,7 +3,7 @@ class_name FirstPersonCamera
 
 @export var strafe_lean_range : float
 @export var strafe_lean_speed : float
-@export var player_character : PlayerCharacter
+@export var player_character : PlayerController
 
 var lean_amount := float(0)
 

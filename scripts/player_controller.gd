@@ -1,5 +1,5 @@
 extends CharacterBody3D
-class_name PlayerCharacter
+class_name PlayerController
 
 @export var gravity = 18.0
 @export var walk_speed = 3.0

@@ -1,6 +1,6 @@
 extends AudioStreamPlayer2D
 
-@export var player_character : PlayerCharacter
+@export var player_character : PlayerController
 @export var jump_sound : AudioStream
 @export var landed_sound : AudioStream
 
