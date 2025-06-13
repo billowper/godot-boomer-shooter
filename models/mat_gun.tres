@@ -1,0 +1,11 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://b0j1yt3b23hgq"]
+
+[ext_resource type="Texture2D" uid="uid://bap03rj44nuki" path="res://models/gun_color.png" id="1_eya0v"]
+[ext_resource type="Texture2D" uid="uid://c3m7xqyunqu0u" path="res://models/character_lad01_gun_color_emissive.png" id="2_7ynkk"]
+
+[resource]
+albedo_texture = ExtResource("1_eya0v")
+emission_enabled = true
+emission_energy_multiplier = 5.0
+emission_texture = ExtResource("2_7ynkk")
+texture_filter = 0

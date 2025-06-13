@@ -77,7 +77,7 @@ func _physics_process(delta: float) -> void:
 	
 	move_and_slide()
 
-	update_stepping(velocity_before_main_ms, delta)
+	# update_stepping(velocity_before_main_ms, delta)
 
 	if not was_grounded and is_on_floor():
 		landed.emit()
@@ -86,7 +86,7 @@ func _physics_process(delta: float) -> void:
 	
 	if (ledge_query["summary"] == LedgeDetectionUtil.Results.FOUND_LEDGE):
 		print("Ledge Found: ", ledge_query["ledge"])
-		DebugDraw3D.draw_line(ledge_query["ledge"].start, ledge_query["ledge"].end, Color.GREEN)
+		# DebugDraw3D.draw_line(ledge_query["ledge"].start, ledge_query["ledge"].end, Color.GREEN)
 
 
 func jump(jump_type: JumpTypes, delta: float) -> void:

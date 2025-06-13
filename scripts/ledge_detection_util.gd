@@ -42,7 +42,7 @@ static func try_find_ledge(space_state: PhysicsDirectSpaceState3D, ray_origin: V
 	var wall_hit: Dictionary = space_state.intersect_ray(wall_ray_query)
 	
 	if not wall_hit.is_empty():
-		DebugDraw3D.draw_line(ray_origin, wall_hit.position, Color.WHITE)
+		# DebugDraw3D.draw_line(ray_origin, wall_hit.position, Color.WHITE)
 		# 2. Check for an overhang above the wall hit point to determine max search height.
 		var overhang_ray_origin: Vector3 = wall_hit.position - (ray_direction * 0.2)
 		var overhang_ray_query := PhysicsRayQueryParameters3D.create(overhang_ray_origin, overhang_ray_origin + Vector3.UP * settings.overhang_check_height, collision_mask)
@@ -73,7 +73,7 @@ static func try_find_ledge(space_state: PhysicsDirectSpaceState3D, ray_origin: V
 			shape_query.shape = sphere_shape
 			shape_query.collision_mask = collision_mask
 			
-			DebugDraw3D.draw_sphere(overlap_point, sphere_shape.radius, Color.RED)
+			# DebugDraw3D.draw_sphere(overlap_point, sphere_shape.radius, Color.RED)
 			
 			if space_state.intersect_shape(shape_query).is_empty():
 				# 5. Point is clear, cast down to find the surface.
