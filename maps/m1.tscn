@@ -1654,6 +1654,8 @@ shadow_reverse_cull_face = true
 [node name="Player" parent="." instance=ExtResource("14_oyt15")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -9.8369, 0.0775509, -0.210669)
 safe_margin = 0.005
+acceleration = 8.0
+crouch_time = 0.3
 max_air_speed = 2.0
 stepping_enabled = true
 step_height = 0.75
@@ -1668,8 +1670,13 @@ climbing_end_distance = 0.5
 climb_ledge_min_height = 1.5
 ledge_detection_settings = SubResource("Resource_oyt15")
 
+[node name="Camera3D" parent="Player" index="2"]
+camera_height_adjust_speed = 5.0
+
 [node name="character_lad01" parent="." instance=ExtResource("15_oyt15")]
 transform = Transform3D(-0.258819, 0, 0.965926, 0, 1, 0, -0.965926, 0, -0.258819, -17.6961, 1.0071, 2.37302)
 
 [node name="character_lad02" parent="." instance=ExtResource("15_oyt15")]
 transform = Transform3D(-0.258819, 0, 0.965926, 0, 1, 0, -0.965926, 0, -0.258819, -17.4306, 0.994739, -2.45031)
+
+[editable path="Player"]

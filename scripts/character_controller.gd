@@ -62,18 +62,8 @@ var _climbing_ledge: Ledge = null
 var _crouch_timer = 0.0
 var _crouch_was_requested = false
 
-func get_crouch_progress() -> float:
-	if not _crouch_requested and not _is_crouching:
-		return 0.0
-	if _is_crouching:
-		return 1.0
-	return clamp(_crouch_timer / crouch_time, 0.0, 1.0)
-
 signal jumped
 signal landed
-signal crouch_start()
-signal crouch_active()
-signal crouch_end()
 
 func set_inputs(crouch_requested: bool, jump_requested: bool, climb_requested: bool, walk_requested: bool, wish_direction: Vector3) -> void:
 	_crouch_requested = crouch_requested
@@ -128,7 +118,6 @@ func update_crouch_state(delta: float) -> void:
 		_is_crouching = false
 		collision_default.disabled = false
 		collision_crouched.disabled = true
-		crouch_end.emit()
 		return
 
 	# crouch requested, increment timer until we crouch
@@ -138,15 +127,26 @@ func update_crouch_state(delta: float) -> void:
 			_is_crouching = true
 			collision_default.disabled = true
 			collision_crouched.disabled = false
-			crouch_active.emit()
 
 	# crouch requested, start timer if not already crouching
 	if _crouch_requested and not _crouch_was_requested and not _is_crouching:
-		_crouch_was_requested = true
-		_crouch_timer = 0.0
-		crouch_start.emit()
-	
+
+		if is_on_floor():
+			_crouch_was_requested = true
+			_crouch_timer = 0.0
+		else:
+			_is_crouching = true
+			collision_default.disabled = true
+			collision_crouched.disabled = false
+
 	_crouch_was_requested = _crouch_requested
+
+func get_crouch_progress() -> float:
+	if not _crouch_requested and not _is_crouching:
+		return 0.0
+	if _is_crouching:
+		return 1.0
+	return clamp(_crouch_timer / crouch_time, 0.0, 1.0)
 
 func jump(jump_type: JumpTypes, delta: float) -> void:
 
@@ -216,7 +216,6 @@ func can_stand() -> bool:
 	parameters.collision_mask = self.collision_mask 
 	parameters.exclude = [self]
 	return space_state.intersect_shape(parameters).is_empty()
-
 	
 func try_find_ledge(origin: Vector3, delta: float) -> bool:
 	# if we're moving horizontally, check for ledges
