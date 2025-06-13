@@ -40,16 +40,16 @@ stream_3/stream = ExtResource("9_llb5v")
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("collision_default", "collision_crouched")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
 script = ExtResource("1_yenwa")
+collision_default = NodePath("CollisionDefault")
 gravity = 15.0
 walk_speed = 3.5
-crouch_speed = 2.5
 acceleration = 10.0
 stop_speed = 5.0
+collision_crouched = NodePath("CollisionCrouched")
+crouch_speed = 2.5
 jump_velocity = 1.5
 step_height = 0.25
 step_safe_margin = 0.01
-collision_default = NodePath("CollisionDefault")
-collision_crouched = NodePath("CollisionCrouched")
 
 [node name="CollisionDefault" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.925, 0)
@@ -62,9 +62,9 @@ shape = SubResource("CapsuleShape3D_sd3sa")
 [node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("player_character")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 script = ExtResource("2_ht1c8")
+player_character = NodePath("..")
 strafe_lean_range = 2.0
 strafe_lean_speed = 20.0
-player_character = NodePath("..")
 
 [node name="PlayerAudio" type="AudioStreamPlayer3D" parent="Camera3D" node_paths=PackedStringArray("player_character")]
 stream = SubResource("AudioStreamPolyphonic_8rb0w")
@@ -79,7 +79,6 @@ script = ExtResource("5_ht1c8")
 player_controller = NodePath("..")
 fps_camera = NodePath("../Camera3D")
 joypad_sensitivity = 5.0
-crouch_camera_offset = 0.75
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("6_qjahl")

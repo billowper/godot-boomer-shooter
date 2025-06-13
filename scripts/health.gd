@@ -1,5 +1,5 @@
-extends Node
 class_name Health
+extends Node
 
 @export var max_health: int = 100
 

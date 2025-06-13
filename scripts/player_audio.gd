@@ -1,5 +1,5 @@
-extends AudioStreamPlayer3D
 class_name PlayerAudio
+extends AudioStreamPlayer3D
 
 @export var player_character : CharacterController
 @export var jump_sound : AudioStream

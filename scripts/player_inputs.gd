@@ -1,22 +1,14 @@
-extends Node
 class_name PlayerInputs	
+extends Node
 
 @export var player_controller: CharacterController
 @export var fps_camera: FirstPersonCamera
 @export var mouse_look_sensitivity = 0.1
 @export var joypad_sensitivity = 1.0
-@export var crouch_camera_offset := .5
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	player_controller.crouchStateChanged.connect(self.set_crouch)
 
-func set_crouch(state: bool) -> void:
-	if state:
-		fps_camera.position -= Vector3(0, crouch_camera_offset, 0)
-	else:
-		fps_camera.position += Vector3(0, crouch_camera_offset, 0)
-		
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		player_controller.rotate_y(deg_to_rad(-event.relative.x * mouse_look_sensitivity))
