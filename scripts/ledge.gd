@@ -15,6 +15,5 @@ class_name Ledge extends Resource
 ## The distance from the ledge surface to the ground below.
 @export var distance_from_ground: float
 
-
 func get_midpoint() -> Vector3:
-    return lerp(start, end, 0.5)    
+	return lerp(start, end, 0.5)    

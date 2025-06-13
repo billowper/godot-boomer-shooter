@@ -953,7 +953,6 @@ script = ExtResource("14_o4wcg")
 min_ledge_width = 1.0
 max_surface_raycast_steps = 30
 max_surface_raycast_step_interval = 0.1
-overhang_check_height = 4.0
 min_distance_to_ground = 0.05
 clearance_height = 1.5
 obstruction_check_size = 0.1
@@ -1695,9 +1694,14 @@ shadow_reverse_cull_face = true
 
 [node name="Player" parent="." instance=ExtResource("14_oyt15")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -9.8369, 0.0775509, -0.210669)
-step_height = 0.3
-step_offset = 0.05
+safe_margin = 0.005
+stepping_enabled = true
+step_height = 0.45
+step_height_air = 0.6
+step_safe_margin = 0.001
+step_ledge_dist = 1.5
 ledge_detection_settings = SubResource("Resource_oyt15")
+show_ledge_debug = true
 
 [node name="character_lad01" parent="." instance=ExtResource("15_oyt15")]
 transform = Transform3D(-0.258819, 0, 0.965926, 0, 1, 0, -0.965926, 0, -0.258819, -15.2456, 0.0020154, 2.04975)

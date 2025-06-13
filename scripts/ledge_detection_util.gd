@@ -42,51 +42,39 @@ static func try_find_ledge(space_state: PhysicsDirectSpaceState3D, ray_origin: V
 	var wall_hit: Dictionary = space_state.intersect_ray(wall_ray_query)
 	
 	if not wall_hit.is_empty():
-		# DebugDraw3D.draw_line(ray_origin, wall_hit.position, Color.WHITE)
-		# 2. Check for an overhang above the wall hit point to determine max search height.
-		var overhang_ray_origin: Vector3 = wall_hit.position - (ray_direction * 0.2)
-		var overhang_ray_query := PhysicsRayQueryParameters3D.create(overhang_ray_origin, overhang_ray_origin + Vector3.UP * settings.overhang_check_height, collision_mask)
-		var overhang_hit: Dictionary = space_state.intersect_ray(overhang_ray_query)
-		
-		var overhang_distance: float = INF
-		if not overhang_hit.is_empty():
-			overhang_distance = overhang_hit.position.distance_to(overhang_ray_origin)
 
-		# 3. Step up the wall and search for a valid surface.
+		# 2. Step up the wall and search for a valid surface.
 		var found_surface := false
-		var surface_point := Vector3.ZERO
-		var surface_normal := Vector3.UP
+		var ledge_midpoint := Vector3.ZERO
 		
 		var overlap_point: Vector3 = wall_hit.position + Vector3.UP * settings.max_surface_raycast_step_interval
 		
 		for i in range(settings.max_surface_raycast_steps):
-			overhang_distance -= settings.max_surface_raycast_step_interval
-			if overhang_distance <= settings.max_surface_raycast_step_interval:
-				result_info.summary = Results.FOUND_NO_SURFACE_OVERHANG_DISTANCE_TOO_CLOSE
-				break
-
-			# 4. Check if the point above the wall is obstructed.
+			# 3. Check if the point above the wall is obstructed.
 			var sphere_shape := SphereShape3D.new()
 			sphere_shape.radius = 0.1
 			var shape_query := PhysicsShapeQueryParameters3D.new()
 			shape_query.transform = Transform3D(Basis(), overlap_point)
 			shape_query.shape = sphere_shape
 			shape_query.collision_mask = collision_mask
-			
-			# DebugDraw3D.draw_sphere(overlap_point, sphere_shape.radius, Color.RED)
-			
+						
 			if space_state.intersect_shape(shape_query).is_empty():
-				# 5. Point is clear, cast down to find the surface.
-				var surface_ray_origin: Vector3 = overlap_point + Vector3.UP - wall_hit.normal.normalized() * 0.5
-				var surface_ray_end: Vector3 = surface_ray_origin + Vector3.DOWN * ((settings.max_surface_raycast_step_interval * 4.0) + 1.0)
+				# 4. Point is clear, cast down to find the surface.
+				var surface_ray_origin: Vector3 = overlap_point + Vector3.UP;
+				surface_ray_origin += (-wall_hit.normal.normalized() * (settings.obstruction_check_size / 2.0))
+				var surface_ray_end: Vector3 = surface_ray_origin + Vector3.DOWN * 2
 				var surface_ray_query := PhysicsRayQueryParameters3D.create(surface_ray_origin, surface_ray_end, collision_mask)
 				var surface_hit := space_state.intersect_ray(surface_ray_query)
 
 				if not surface_hit.is_empty():
+
+					ledge_midpoint = wall_hit.position
+					ledge_midpoint.y = surface_hit.position.y
+
 					result_info.summary = Results.SURFACE_OBSTRUCTED_NO_CLEARANCE
 					
-					# 6. Found a surface, now check if there's clearance to stand up.
-					var box_center : Vector3 = surface_hit.position + Vector3.UP * (settings.clearance_height * 0.5 + 0.02)
+					# 5. Found a surface, now check if there's clearance to stand up.
+					var box_center : Vector3 = surface_hit.position + Vector3.UP * (settings.clearance_height * 0.5 + 0.01)
 					var box_size := Vector3(settings.obstruction_check_size, settings.clearance_height, settings.obstruction_check_size)
 					
 					var box_shape := BoxShape3D.new()
@@ -103,10 +91,8 @@ static func try_find_ledge(space_state: PhysicsDirectSpaceState3D, ray_origin: V
 					clearance_query.collision_mask = settings.obstruction_layers
 					
 					if space_state.intersect_shape(clearance_query).is_empty():
-						# 7. Clearance is good. We found a valid spot.
+						# 6. Clearance is good. We found a valid spot.
 						found_surface = true
-						surface_point = surface_hit.position - ray_direction.normalized() * 0.5
-						surface_normal = surface_hit.normal # Store for later use if needed
 						break
 			else:
 				result_info.summary = Results.FOUND_NO_SURFACE_OBSTRUCTED
@@ -114,8 +100,8 @@ static func try_find_ledge(space_state: PhysicsDirectSpaceState3D, ray_origin: V
 			overlap_point += Vector3.UP * settings.max_surface_raycast_step_interval
 
 		if found_surface:
-			# 8. Found a surface, now get the distance to the ground below it.
-			var ground_ray_origin : Vector3 = surface_point + (wall_hit.normal.normalized() * 0.7)
+			# 7. Found a surface, now get the distance to the ground below it.
+			var ground_ray_origin : Vector3 = ledge_midpoint + (wall_hit.normal.normalized() * 0.25)
 			var ground_ray_query := PhysicsRayQueryParameters3D.create(ground_ray_origin, ground_ray_origin + Vector3.DOWN * 1000.0, collision_mask)
 			var ground_hit := space_state.intersect_ray(ground_ray_query)
 			
@@ -123,16 +109,16 @@ static func try_find_ledge(space_state: PhysicsDirectSpaceState3D, ray_origin: V
 			if not ground_hit.is_empty():
 				ground_distance = ground_hit.position.distance_to(ground_ray_origin)
 
-			# 9. Check if the ledge is too close to the ground.
+			# 8. Check if the ledge is too close to the ground.
 			if ground_distance < settings.min_distance_to_ground:
 				result_info.summary = Results.TOO_CLOSE_TO_GROUND
 				result_info.ground_distance = ground_distance
 				return result_info # Return info, but it's not a valid "grabbable" ledge
 
-			# 10. All checks passed. Create the Ledge data object.
+			# 9. All checks passed. Create the Ledge data object.
 			var cross: Vector3 = wall_hit.normal.cross(Vector3.UP)
-			var ledge_start := surface_point - cross * settings.min_ledge_width * 0.5
-			var ledge_end := surface_point + cross * settings.min_ledge_width * 0.5
+			var ledge_start := ledge_midpoint - cross * settings.min_ledge_width * 0.5
+			var ledge_end := ledge_midpoint + cross * settings.min_ledge_width * 0.5
 			
 			var ledge := Ledge.new()
 			ledge.start = ledge_start

@@ -13,9 +13,6 @@ class_name LedgeDetectionSettings extends Resource
 ## The distance to move up the wall for each step.
 @export var max_surface_raycast_step_interval: float = 2.0
 
-## The maximum height to check for an overhang above the initial wall hit.
-@export var overhang_check_height: float = 4.0
-
 ## A ledge must be at least this far from the ground to be valid.
 @export var min_distance_to_ground: float = 2.0
 

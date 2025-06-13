@@ -1,24 +1,36 @@
 class_name CharacterController
 extends CharacterBody3D
 
+@export_group("General Settings")
 @export var gravity = 18.0
+@export var friction = 4.5
 @export var walk_speed = 3.0
 @export var run_speed = 6.0
 @export var crouch_speed = 2.0
-@export var stop_speed = 2.0
 @export var acceleration = 1.5
+@export var stop_speed = 2.0
+
+@export_group("Jumping & Air Control")
 @export var max_air_speed = 1.5
 @export var jump_velocity = 4.5
 @export var wall_jump_force = 4.5
-@export var friction = 4.5
 @export var coyote_time = .15
+
+@export_group("Stepping")
+@export var stepping_enabled := false
 @export var step_height := 0.4 
 @export var step_height_air := 0.4 
 @export var step_offset := 0.1
 @export var step_safe_margin := 0.1
+@export var step_ledge_dist := 0.1
+
+@export_group("Collision Shapes")
 @export var collision_default: CollisionShape3D
 @export var collision_crouched: CollisionShape3D
+
+@export_group("Ledge Detection")
 @export var ledge_detection_settings: LedgeDetectionSettings
+@export var show_ledge_debug := false
 
 enum JumpTypes
 {
@@ -74,20 +86,22 @@ func _physics_process(delta: float) -> void:
 		_time_since_grounded += delta
 
 	var velocity_before_main_ms = velocity
+	var horizontal_vel = Vector3(velocity.x, 0, velocity.z).normalized()
 	
 	move_and_slide()
 
-	# update_stepping(velocity_before_main_ms, delta)
+	if (horizontal_vel.length_squared() > 0.01):
+		var ledge_query = LedgeDetectionUtil.try_find_ledge(get_world_3d().direct_space_state, global_position + Vector3.UP * step_safe_margin, horizontal_vel, ledge_detection_settings, collision_mask)
+		
+		if (ledge_query["summary"] == LedgeDetectionUtil.Results.FOUND_LEDGE) and show_ledge_debug:
+			DebugDraw3D.draw_line(ledge_query["ledge"].start, ledge_query["ledge"].end, Color.GREEN)
+
+		if stepping_enabled:
+			update_stepping_ledge(velocity_before_main_ms, ledge_query["ledge"], delta)
 
 	if not was_grounded and is_on_floor():
+		print("Landed")
 		landed.emit()
-
-	var ledge_query = LedgeDetectionUtil.try_find_ledge(get_world_3d().direct_space_state, global_position + Vector3.UP * step_safe_margin, -transform.basis.z, ledge_detection_settings, collision_mask)
-	
-	if (ledge_query["summary"] == LedgeDetectionUtil.Results.FOUND_LEDGE):
-		print("Ledge Found: ", ledge_query["ledge"])
-		# DebugDraw3D.draw_line(ledge_query["ledge"].start, ledge_query["ledge"].end, Color.GREEN)
-
 
 func jump(jump_type: JumpTypes, delta: float) -> void:
 
@@ -168,51 +182,26 @@ func set_crouch(state :bool) -> void:
 func can_step() -> bool:
 	return is_on_floor() or _crouch_requested
 
-func update_stepping(velocity_before_move: Vector3, _delta: float) -> void:
-
+func update_stepping_ledge(velocity_before_move: Vector3, ledge: Ledge, _delta: float) -> void:
 	var horizontal_vel = Vector3(velocity_before_move.x, 0, velocity_before_move.z)
 
-	# if we're trying to move horizontally, can step and hit something, then lets try to step up it
-	if horizontal_vel.length_squared() > 0.01 and can_step() and get_slide_collision_count() > 0:
-		for i in range(get_slide_collision_count()):
-			var collision = get_slide_collision(i)
+	if ledge == null:
+		return
 
-			# make sure the collision is a wall
-			if collision and collision.get_collider() != null and abs(collision.get_normal().y) < 0.3:
-				
-				var up_motion = Vector3.UP * (step_height if is_on_floor() else step_height_air)
-			
-				# try and move upwards
-				if not test_move(transform, up_motion, null, step_safe_margin):
+	if !can_step():
+		return
 
-					var original_pos = global_position
-					var original_vel = velocity
+	var touching_wall = get_slide_collision_count() > 0 and get_slide_collision(0).get_collider() != null and get_slide_collision(0).get_normal().y < 0.3
+	var moving_towards_wall = horizontal_vel.length_squared() > 0.01
 
-					global_position += up_motion
-
-					var step_velocity = horizontal_vel.normalized() * step_offset
-
-					# now try to move forwards onto the step
-					if not test_move(transform, step_velocity, null, step_safe_margin): 
-						
-						global_position += step_velocity
-
-						apply_floor_snap()
-						move_and_slide()
-
-						if is_on_floor():
-							return
-
-						global_position = original_pos
-						velocity = original_vel
-						print("Failed to step up, reverting position")
-						return
-
-					else:
-						
-						# revert the up motion we failed to step and return
-						global_position -= up_motion
-						apply_floor_snap()
-						return
-
-				return
+	if touching_wall and moving_towards_wall:
+		var pos_flat = global_position * Vector3(1, 0, 1)
+		var ledge_midpoint_flat = ledge.get_midpoint() * Vector3(1, 0, 1)
+		var horiz_distance = pos_flat.distance_to(ledge_midpoint_flat)
+		var vertical_distance = ledge.get_midpoint().y - global_position.y
+		print("Horizontal Distance: ", horiz_distance, " Vertical Distance: ", vertical_distance)
+		if (vertical_distance < (step_height if is_on_floor() else step_height_air) and horiz_distance < step_ledge_dist):
+			global_position.y = ledge.get_midpoint().y + step_safe_margin
+			global_position += -ledge.normal * step_offset
+			move_and_slide()
+			apply_floor_snap()
