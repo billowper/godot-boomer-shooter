@@ -30,7 +30,7 @@ enum Results {
 #   "ground_distance": float,
 #   "ledge": Ledge
 # }
-static func try_find_ledge(space_state: PhysicsDirectSpaceState3D, ray_origin: Vector3, ray_direction: Vector3, settings: LedgeDetectionSettings, collision_mask: int = 1) -> Dictionary:
+static func try_find_ledge(space_state: PhysicsDirectSpaceState3D, exclude: Object, ray_origin: Vector3, ray_direction: Vector3, settings: LedgeDetectionSettings, collision_mask: int = 1) -> Dictionary:
 	var result_info := {
 		"summary": Results.FOUND_NO_WALL,
 		"ground_distance": 0.0,
@@ -39,24 +39,26 @@ static func try_find_ledge(space_state: PhysicsDirectSpaceState3D, ray_origin: V
 
 	# 1. Find a wall by casting a ray forward.
 	var wall_ray_query := PhysicsRayQueryParameters3D.create(ray_origin, ray_origin + ray_direction * 10.0, collision_mask)
+	wall_ray_query.exclude = [exclude]
 	var wall_hit: Dictionary = space_state.intersect_ray(wall_ray_query)
-	
+
 	if not wall_hit.is_empty():
 
 		# 2. Step up the wall and search for a valid surface.
 		var found_surface := false
 		var ledge_midpoint := Vector3.ZERO
-		
 		var overlap_point: Vector3 = wall_hit.position + Vector3.UP * settings.max_surface_raycast_step_interval
 		
 		for i in range(settings.max_surface_raycast_steps):
 			# 3. Check if the point above the wall is obstructed.
+			# sphere check is maybe a bit overkill, but it ensures we don't miss small obstructions.
 			var sphere_shape := SphereShape3D.new()
 			sphere_shape.radius = 0.1
 			var shape_query := PhysicsShapeQueryParameters3D.new()
 			shape_query.transform = Transform3D(Basis(), overlap_point)
 			shape_query.shape = sphere_shape
 			shape_query.collision_mask = collision_mask
+			shape_query.exclude = [exclude]
 						
 			if space_state.intersect_shape(shape_query).is_empty():
 				# 4. Point is clear, cast down to find the surface.
@@ -64,6 +66,7 @@ static func try_find_ledge(space_state: PhysicsDirectSpaceState3D, ray_origin: V
 				surface_ray_origin += (-wall_hit.normal.normalized() * (settings.obstruction_check_size / 2.0))
 				var surface_ray_end: Vector3 = surface_ray_origin + Vector3.DOWN * 2
 				var surface_ray_query := PhysicsRayQueryParameters3D.create(surface_ray_origin, surface_ray_end, collision_mask)
+				surface_ray_query.exclude = [exclude]
 				var surface_hit := space_state.intersect_ray(surface_ray_query)
 
 				if not surface_hit.is_empty():
@@ -89,6 +92,7 @@ static func try_find_ledge(space_state: PhysicsDirectSpaceState3D, ray_origin: V
 					clearance_query.transform = box_transform
 					clearance_query.shape = box_shape
 					clearance_query.collision_mask = settings.obstruction_layers
+					clearance_query.exclude = [exclude]
 					
 					if space_state.intersect_shape(clearance_query).is_empty():
 						# 6. Clearance is good. We found a valid spot.
@@ -103,6 +107,7 @@ static func try_find_ledge(space_state: PhysicsDirectSpaceState3D, ray_origin: V
 			# 7. Found a surface, now get the distance to the ground below it.
 			var ground_ray_origin : Vector3 = ledge_midpoint + (wall_hit.normal.normalized() * 0.25)
 			var ground_ray_query := PhysicsRayQueryParameters3D.create(ground_ray_origin, ground_ray_origin + Vector3.DOWN * 1000.0, collision_mask)
+			ground_ray_query.exclude = [exclude]
 			var ground_hit := space_state.intersect_ray(ground_ray_query)
 			
 			var ground_distance: float = INF

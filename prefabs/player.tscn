@@ -12,13 +12,13 @@
 [ext_resource type="AudioStream" uid="uid://ch54p3lv22pde" path="res://sounds/Footstep Concrete Running 1_04.wav" id="9_llb5v"]
 [ext_resource type="AudioStream" uid="uid://dqh07ks71o1ri" path="res://sounds/Footstep Concrete Running 1_05.wav" id="10_x0bak"]
 
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_0wwdq"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8rb0w"]
+radius = 0.35
 height = 1.85
-radius = 0.35
 
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_wchxy"]
-height = 0.85
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sd3sa"]
 radius = 0.35
+height = 0.85
 
 [sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_8rb0w"]
 
@@ -53,11 +53,11 @@ collision_crouched = NodePath("CollisionCrouched")
 
 [node name="CollisionDefault" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.925, 0)
-shape = SubResource("CylinderShape3D_0wwdq")
+shape = SubResource("CapsuleShape3D_8rb0w")
 
 [node name="CollisionCrouched" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.425, 0)
-shape = SubResource("CylinderShape3D_wchxy")
+shape = SubResource("CapsuleShape3D_sd3sa")
 
 [node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("player_character")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)

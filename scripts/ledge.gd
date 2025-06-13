@@ -1,7 +1,6 @@
 # ledge.gd
-# A data resource to hold information about a detected ledge.
-@tool
-class_name Ledge extends Resource
+# holds information about a detected ledge.
+class_name Ledge 
 
 ## The starting point of the ledge's center line.
 @export var start: Vector3

@@ -153,4 +153,5 @@ bones/321/rotation = Quaternion(0.564981, 0.564982, 0.425201, -0.425201)
 material_override = ExtResource("3_bmsme")
 
 [node name="helmet" parent="char_grp/rig/Skeleton3D" index="1"]
+visible = false
 material_override = ExtResource("3_bmsme")
