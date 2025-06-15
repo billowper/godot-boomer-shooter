@@ -1,4 +1,4 @@
-class_name FirstPersonCamera
+class_name PlayerCamera
 extends Camera3D
 
 @export var player_character : CharacterController

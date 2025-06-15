@@ -2,7 +2,7 @@ class_name PlayerInputs
 extends Node
 
 @export var player_controller: CharacterController
-@export var fps_camera: FirstPersonCamera
+@export var fps_camera: PlayerCamera
 @export var mouse_look_sensitivity = 0.1
 @export var joypad_sensitivity = 1.0
 

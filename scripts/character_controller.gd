@@ -22,7 +22,8 @@ extends CharacterBody3D
 @export var coyote_time = .15
 
 @export_group("Stepping")
-@export var stepping_enabled := false
+@export var step_on_ground := false
+@export var step_in_air := false
 @export var step_height := 0.4 
 @export var step_height_air := 0.4 
 @export var step_offset := 0.1
@@ -42,6 +43,21 @@ extends CharacterBody3D
 @export var ledge_detection_settings: LedgeDetectionSettings
 @export var show_ledge_debug := false
 
+signal jumped
+signal landed
+
+var jump_requested := false
+var wish_direction := Vector3.ZERO
+var crouch_requested := false
+var walk_requested := false
+var climb_requested := false
+var is_crouching := false
+var time_since_grounded := 0.0
+var stepping_ledge: Ledge = null
+var climbing_ledge: Ledge = null
+var crouch_timer = 0.0
+var crouch_was_requested = false
+
 enum JumpTypes
 {
 	None,
@@ -50,27 +66,12 @@ enum JumpTypes
 	WallJump
 }
 
-var _jump_requested := false
-var _wish_direction := Vector3.ZERO
-var _crouch_requested := false
-var _walk_requested := false
-var _climb_requested := false
-var _is_crouching := false
-var _time_since_grounded := 0.0
-var _stepping_ledge: Ledge = null
-var _climbing_ledge: Ledge = null
-var _crouch_timer = 0.0
-var _crouch_was_requested = false
-
-signal jumped
-signal landed
-
-func set_inputs(crouch_requested: bool, jump_requested: bool, climb_requested: bool, walk_requested: bool, wish_direction: Vector3) -> void:
-	_crouch_requested = crouch_requested
-	_jump_requested = jump_requested
-	_wish_direction = wish_direction
-	_walk_requested = walk_requested
-	_climb_requested = climb_requested
+func set_inputs(is_crouching_requested: bool, is_jump_requested: bool, is_climb_requested: bool, is_walk_requested: bool, wish_dir: Vector3) -> void:
+	self.crouch_requested = is_crouching_requested
+	self.jump_requested = is_jump_requested
+	self.wish_direction = wish_dir
+	self.walk_requested = is_walk_requested
+	self.climb_requested = is_climb_requested
 
 func _ready():
 	collision_crouched.disabled = true;
@@ -79,17 +80,17 @@ func _physics_process(delta: float) -> void:
 
 	update_crouch_state(delta)
 
-	if _jump_requested:
+	if jump_requested:
 		var jump_type = can_jump()
 		jump(jump_type, delta)
 
-	_jump_requested = false
+	jump_requested = false
 
-	if _stepping_ledge:
+	if stepping_ledge:
 		update_step_movement(delta)
 		return
 
-	if _climbing_ledge:
+	if climbing_ledge:
 		update_climb_movement(delta)
 		return
 
@@ -99,11 +100,11 @@ func _physics_process(delta: float) -> void:
 	var was_grounded := is_on_floor()
 
 	if was_grounded:
-		velocity = update_velocity_grounded(_wish_direction, delta)
-		_time_since_grounded = 0
+		velocity = update_velocity_grounded(wish_direction, delta)
+		time_since_grounded = 0
 	else:
-		velocity = update_velocity_air(_wish_direction, delta)
-		_time_since_grounded += delta
+		velocity = update_velocity_air(wish_direction, delta)
+		time_since_grounded += delta
 
 	move_and_slide()
 
@@ -114,39 +115,39 @@ func _physics_process(delta: float) -> void:
 func update_crouch_state(delta: float) -> void:
 
 	# if we were crouching, but no longer requested, end crouch (if we can stand up)
-	if !_crouch_requested and _is_crouching && can_stand():
-		_is_crouching = false
+	if !crouch_requested and is_crouching && can_stand():
+		is_crouching = false
 		collision_default.disabled = false
 		collision_crouched.disabled = true
 		return
 
 	# crouch requested, increment timer until we crouch
-	if _crouch_requested and _crouch_was_requested and not _is_crouching:
-		_crouch_timer += delta
-		if _crouch_timer >= crouch_time:
-			_is_crouching = true
+	if crouch_requested and crouch_was_requested and not is_crouching:
+		crouch_timer += delta
+		if crouch_timer >= crouch_time:
+			is_crouching = true
 			collision_default.disabled = true
 			collision_crouched.disabled = false
 
 	# crouch requested, start timer if not already crouching
-	if _crouch_requested and not _crouch_was_requested and not _is_crouching:
+	if crouch_requested and not crouch_was_requested and not is_crouching:
 
 		if is_on_floor():
-			_crouch_was_requested = true
-			_crouch_timer = 0.0
+			crouch_was_requested = true
+			crouch_timer = 0.0
 		else:
-			_is_crouching = true
+			is_crouching = true
 			collision_default.disabled = true
 			collision_crouched.disabled = false
 
-	_crouch_was_requested = _crouch_requested
+	crouch_was_requested = crouch_requested
 
 func get_crouch_progress() -> float:
-	if not _crouch_requested and not _is_crouching:
+	if not crouch_requested and not is_crouching:
 		return 0.0
-	if _is_crouching:
+	if is_crouching:
 		return 1.0
-	return clamp(_crouch_timer / crouch_time, 0.0, 1.0)
+	return clamp(crouch_timer / crouch_time, 0.0, 1.0)
 
 func jump(jump_type: JumpTypes, delta: float) -> void:
 
@@ -164,18 +165,18 @@ func jump(jump_type: JumpTypes, delta: float) -> void:
 			velocity.y = sqrt(2 * gravity * jump_velocity)
 			velocity += get_slide_collision(0).get_normal() * wall_jump_force
 
-	velocity = update_velocity_air(-_wish_direction, delta)
+	velocity = update_velocity_air(-wish_direction, delta)
 	jumped.emit()
 
 func get_max_ground_speed() -> float:
-	var max_speed = crouch_speed if _is_crouching else run_speed
+	var max_speed = crouch_speed if is_crouching else run_speed
 
-	if !_is_crouching and _walk_requested:
+	if !is_crouching and walk_requested:
 		max_speed = walk_speed
 
 	return max_speed
 
-func update_velocity_grounded(wish_direction: Vector3, delta: float) -> Vector3:
+func update_velocity_grounded(wish_dir: Vector3, delta: float) -> Vector3:
 	var max_speed = get_max_ground_speed()
 	var speed = velocity.length()
 	if (speed != 0):
@@ -183,30 +184,30 @@ func update_velocity_grounded(wish_direction: Vector3, delta: float) -> Vector3:
 		var drop = control * friction * delta
 		velocity *= max(speed - drop, 0) / speed
 
-	return accelerate(wish_direction, max_speed, delta)
+	return accelerate(wish_dir, max_speed, delta)
 
-func update_velocity_air(wish_direction: Vector3, delta: float) -> Vector3:
+func update_velocity_air(wish_dir: Vector3, delta: float) -> Vector3:
 	velocity += Vector3.DOWN * gravity * delta
-	return accelerate(wish_direction, max_air_speed, delta)
+	return accelerate(wish_dir, max_air_speed, delta)
 
-func accelerate(wish_direction: Vector3, max_speed: float, delta: float) -> Vector3:
-	var current_speed = velocity.dot(wish_direction)
+func accelerate(wish_dir: Vector3, max_speed: float, delta: float) -> Vector3:
+	var current_speed = velocity.dot(wish_dir)
 	var add_speed = clamp(max_speed - current_speed, 0, (acceleration * max_speed) * delta)
-	return velocity + add_speed * wish_direction
+	return velocity + add_speed * wish_dir
 
 func can_jump() -> JumpTypes:
 	if is_on_floor():
 		return JumpTypes.Normal
-	if (_time_since_grounded < coyote_time):
+	if (time_since_grounded < coyote_time):
 		return JumpTypes.Normal
 	if (get_slide_collision_count() > 0 and get_slide_collision(0) and get_slide_collision(0).get_collider() != null):
-		if (get_slide_collision(0).get_normal().y < 0.3 && _wish_direction.dot(get_slide_collision(0).get_normal()) < 0):
+		if (get_slide_collision(0).get_normal().y < 0.3 && wish_direction.dot(get_slide_collision(0).get_normal()) < 0):
 			return JumpTypes.WallJump
 
 	return JumpTypes.None
 
 func can_stand() -> bool:
-	if !_is_crouching:
+	if !is_crouching:
 		return true
 
 	var space_state = get_world_3d().direct_space_state
@@ -219,7 +220,7 @@ func can_stand() -> bool:
 	
 func try_find_ledge(origin: Vector3, delta: float) -> bool:
 	# if we're moving horizontally, check for ledges
-	var flat_wish_direction = _wish_direction * Vector3(1, 0, 1)
+	var flat_wish_direction = wish_direction * Vector3(1, 0, 1)
 	if flat_wish_direction.length_squared() < 0.01:
 		return false
 
@@ -244,19 +245,19 @@ func try_find_ledge(origin: Vector3, delta: float) -> bool:
 		var horiz_distance = pos_flat.distance_to(ledge_midpoint_flat)
 		var vertical_distance = ledge.get_midpoint().y - origin.y
 			
-		var can_step = (stepping_enabled and is_on_floor() or _crouch_requested)
+		var can_step = ((step_on_ground and is_on_floor()) or (not is_on_floor() and step_in_air and is_crouching))
 		if can_step:
 			if (vertical_distance < (step_height if is_on_floor() else step_height_air) and horiz_distance <= (vertical_distance + (collision_default.shape.radius * 4))):
-				_stepping_ledge = ledge
+				stepping_ledge = ledge
 				print("found step")
 				update_step_movement(delta)
 				return true
 
 		var ledge_in_range = vertical_distance < climb_ledge_dist and horiz_distance < collision_default.shape.radius * 2
 		var ledge_high_enough = ledge.distance_from_ground > climb_ledge_min_height
-		var can_climb = not is_on_floor() and _climb_requested and ledge_in_range and ledge_high_enough
+		var can_climb = not is_on_floor() and climb_requested and ledge_in_range and ledge_high_enough
 		if can_climb:
-			_climbing_ledge = ledge
+			climbing_ledge = ledge
 			print("found climbing ledge")
 			if show_ledge_debug:
 				DebugDraw3D.draw_line(ledge.get_midpoint(), ledge.get_midpoint() + Vector3.UP, Color.BLUE, 5)
@@ -266,24 +267,24 @@ func try_find_ledge(origin: Vector3, delta: float) -> bool:
 
 func update_step_movement(delta: float) -> void: 
 
-	if _wish_direction.length() < 0.01:
-		_stepping_ledge = null
+	if wish_direction.length() < 0.01:
+		stepping_ledge = null
 		velocity += Vector3.DOWN * gravity
 		move_and_slide()
 		apply_floor_snap()
 		return
 
-	velocity = update_velocity_grounded(_wish_direction, delta)
+	velocity = update_velocity_grounded(wish_direction, delta)
 	velocity += Vector3.UP * get_max_ground_speed() * step_climb_speed_multi * delta
 	move_and_slide()
 
-	var dir_to_ledge = (_stepping_ledge.get_midpoint() * Vector3(1, 0, 1)) - (global_position * Vector3(1, 0, 1))
+	var dir_to_ledge = (stepping_ledge.get_midpoint() * Vector3(1, 0, 1)) - (global_position * Vector3(1, 0, 1))
 	var ledge_behind_us = dir_to_ledge.dot(-transform.basis.z) < 0
 
 	if ledge_behind_us:
 		var origin = global_position
-		origin.y = _stepping_ledge.get_midpoint().y
-		_stepping_ledge = null
+		origin.y = stepping_ledge.get_midpoint().y
+		stepping_ledge = null
 		print("step complete")
 		if !try_find_ledge(origin, delta):
 			velocity += Vector3.DOWN * gravity
@@ -292,25 +293,25 @@ func update_step_movement(delta: float) -> void:
 
 func update_climb_movement(delta: float) -> void: 
 
-	if not _climb_requested:
-		_climbing_ledge = null
+	if not climb_requested:
+		climbing_ledge = null
 		print("stopped climbing ledge")
 		return
 
-	var dir_to_ledge = (_climbing_ledge.get_midpoint() * Vector3(1, 0, 1)) - (global_position * Vector3(1, 0, 1))
+	var dir_to_ledge = (climbing_ledge.get_midpoint() * Vector3(1, 0, 1)) - (global_position * Vector3(1, 0, 1))
 
 	var ledge_in_front = dir_to_ledge.dot(-transform.basis.z) > 0
-	var vertical_distance = _climbing_ledge.get_midpoint().y - global_position.y
+	var vertical_distance = climbing_ledge.get_midpoint().y - global_position.y
 
 	if vertical_distance > climbing_end_distance:
 		velocity = Vector3.UP * climb_speed
 	else:
-		velocity = update_velocity_air(-_climbing_ledge.normal.normalized(), delta)
+		velocity = update_velocity_air(-climbing_ledge.normal.normalized(), delta)
 
 	# make sure we're up and over the ledge
 
 	if not ledge_in_front && dir_to_ledge.length() > .1:
-		_climbing_ledge = null
+		climbing_ledge = null
 		velocity += Vector3.DOWN * gravity
 		move_and_slide()
 		apply_floor_snap()
