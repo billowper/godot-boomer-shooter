@@ -14,8 +14,8 @@ extends AudioStreamPlayer3D
 var _step_cycle: float = 0.0
 
 func _ready():
-	actor.character_controller.jumped.connect(self.on_jump)
-	actor.character_controller.landed.connect(self.on_landed)
+	actor.character.jumped.connect(self.on_jump)
+	actor.character.landed.connect(self.on_landed)
 
 func on_jump():
 	if jump_sound:
@@ -27,9 +27,9 @@ func on_landed():
 		_step_cycle = 0
 	
 func _physics_process(delta: float) -> void:
-	var player_vel = actor.character_controller.velocity * Vector3(1, 0, 1)
+	var player_vel = actor.character.velocity * Vector3(1, 0, 1)
 	if player_vel.length() > 0.0:
-		_step_cycle += (player_vel.length() * actor.character_controller.get_max_ground_speed()) * delta
+		_step_cycle += (player_vel.length() * actor.character.get_max_ground_speed()) * delta
 	else:
 		_step_cycle = 0
 
@@ -38,9 +38,9 @@ func _physics_process(delta: float) -> void:
 		actor.play_sound(footstep_sound)
 
 func get_footstep_interval() -> float:
-	if actor.character_controller.is_crouching:
+	if actor.character.is_crouching:
 		return footstep_interval_crouch
-	elif actor.character_controller.walk_requested:
+	elif actor.character.walk_requested:
 		return footstep_interval_walk
 	else:
 		return footstep_interval_run

@@ -1,11 +1,12 @@
 class_name AI_Senses
 extends Node3D
 
-@export var actor_self: Actor
 @export var vision_range: float = 20.0
 @export var vision_field_of_view_degrees: float = 90.0
 @export var hearing_range: float = 25.0
 @export_flags_3d_physics var collision_mask: int = 1
+
+var actor_self: Actor
 
 var current_target: Actor = null
 
@@ -15,6 +16,10 @@ var _recent_sound_events: Array[Dictionary] = []
 func _ready() -> void:
 	# Ensure actors are ready before connecting signals
 	call_deferred("_register_sound_listeners")
+	actor_self = self.get_parent() as Actor
+	if not actor_self:
+		push_error("AI_Senses must be a child of an Actor node.")
+		return
 	
 func _register_sound_listeners() -> void:
 	await get_tree().physics_frame # Wait a frame to ensure nodes are ready
@@ -84,21 +89,32 @@ func see() -> void:
 		if dir_to_target.length_squared() > vision_range * vision_range:
 			continue
 
-		var dot_product = -global_transform.basis.z.dot(dir_to_target.normalized())
-		print("Dot product with %s: %f" % [target_actor.get_parent().name, dot_product])
-		if dot_product < deg_to_rad(vision_field_of_view_degrees):
+		var facing_alignment = -global_transform.basis.z.dot(dir_to_target.normalized())
+		var is_facing_target = facing_alignment > 0
+
+		if not is_facing_target:
 			continue
 
+		var angle_to_target = acos(facing_alignment)
+		var field_of_view_radians = deg_to_rad(vision_field_of_view_degrees / 2.0)
+		var in_field_of_view = angle_to_target <= field_of_view_radians
+
+		if not in_field_of_view:
+			continue 
+
 		var ray_target_pos = target_actor.global_position + Vector3.UP # Approx center of target
-		var query = PhysicsRayQueryParameters3D.create(global_position, ray_target_pos, collision_mask, [self, target_actor])
+		var query = PhysicsRayQueryParameters3D.create(global_position, ray_target_pos, collision_mask, [actor_self.character, target_actor.character])
 		var result = space_state.intersect_ray(query)
 
 		if result.is_empty(): # empty means no obstacles in the way
+			DebugDraw3D.draw_line(global_position, ray_target_pos, Color.GREEN)
 			var dist_sq = global_position.distance_squared_to(target_actor.global_position)
 			if dist_sq < min_dist_sq:
 				min_dist_sq = dist_sq
 				closest_visible_target = target_actor
+		else:
+			print("%s cannot see %s due to an obstacle." % [name, target_actor.name])
+			DebugDraw3D.draw_line(global_position, ray_target_pos, Color.RED)
 	
 	if closest_visible_target:
 		current_target = closest_visible_target
-		print("%s sees %s" % [name, current_target.name])
