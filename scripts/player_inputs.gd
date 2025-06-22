@@ -24,12 +24,6 @@ func _process(_delta: float) -> void:
 	var add_rotation = deg_to_rad(-look_y * joypad_sensitivity)
 	fps_camera.rotation.x = clamp(fps_camera.rotation.x + add_rotation, deg_to_rad(-89), deg_to_rad(89))
 
-	if Input.is_action_just_pressed("ui_cancel"):
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-
-	if Input.is_action_just_pressed("fire"):
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-
 	var move_direction = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
 	
 	var jump_requested = false
