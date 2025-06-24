@@ -6,7 +6,10 @@ extends Node
 @export var mouse_look_sensitivity = 0.1
 @export var joypad_sensitivity = 1.0
 
+static var _local: PlayerInputs
+
 func _ready():
+	_local = self
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _input(event: InputEvent) -> void:
@@ -16,6 +19,9 @@ func _input(event: InputEvent) -> void:
 		fps_camera.rotation.x = clamp(fps_camera.rotation.x + add_rotation, deg_to_rad(-89), deg_to_rad(89))	
 
 func _process(_delta: float) -> void:
+
+	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		return
 
 	var look_x = Input.get_axis("look_left", "look_right") 
 	var look_y = Input.get_axis("look_up", "look_down") 
