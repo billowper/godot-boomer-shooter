@@ -9,6 +9,7 @@ enum GameState{
 	PAUSED,
 	GAME_OVER
 }
+
 var game_state: GameState = GameState.STARTUP
 var menu_scene: Node = null
 var hud_scene: Node = null
@@ -16,6 +17,9 @@ var pause_screen: Node = null
 var current_map_scene: Node = null
 
 func _ready() -> void:
+
+	add_child(load("res://scenes/dev_console.tscn").instantiate())
+	
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	menu_scene = load("res://scenes/menu.tscn").instantiate()
 
@@ -23,33 +27,21 @@ func _ready() -> void:
 
 	game_state = GameState.MAIN_MENU
 
-	multiplayer.peer_connected.connect(on_peer_connected)
-	multiplayer.peer_disconnected.connect(on_peer_disconnected)
+	multiplayer.peer_connected.connect(_on_peer_connected)
+	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+	
+	Console.add_command("quit", quit_to_menu, true)
+	Console.add_command("join", join_game, true)
+	Console.add_command("map", load_map, true)
 
-func on_peer_connected() -> void:
+func _on_peer_connected() -> void:
 	Console.add_log("peer connected")
 
-func on_peer_disconnected() -> void:
+func _on_peer_disconnected() -> void:
 	Console.add_log("peer connected")
 
 func start_game() -> void:
-
-	game_state = GameState.LOADING
-
-	remove_child(menu_scene)
-
-	load_map("res://maps/m1.tscn")
-
-	hud_scene = load("res://scenes/hud.tscn").instantiate()
-	add_child(hud_scene)
-
-	pause_screen = load("res://scenes/pause_screen.tscn").instantiate()
-
-	game_state = GameState.PLAYING
-
-	var peer = ENetMultiplayerPeer.new()
-	peer.create_server(7777, 32)
-	multiplayer.multiplayer_peer = peer
+	load_map("m1")
 
 func join_game(address: String) -> void:
 	game_state = GameState.LOADING
@@ -58,19 +50,42 @@ func join_game(address: String) -> void:
 	peer.create_client(address, 7777)
 	multiplayer.multiplayer_peer = peer
 
-func load_map(map_path: String) -> void:
+func load_map(map_name: String) -> void:
 
 	game_state = GameState.LOADING
-
+	remove_child(menu_scene)
+	
 	if current_map_scene:
 		current_map_scene.queue_free()
 		current_map_scene = null
 
-	current_map_scene = load(map_path).instantiate()
-	current_map_scene.process_mode = PROCESS_MODE_PAUSABLE
-	add_child(current_map_scene)
+	var res_path = "res://maps/"+map_name+".tscn"
+
+	if ResourceLoader.exists(res_path):
+		current_map_scene = load("res://maps/"+map_name+".tscn").instantiate()
+		current_map_scene.process_mode = PROCESS_MODE_PAUSABLE
+		add_child(current_map_scene)
+		game_state = GameState.PLAYING
+		post_map_load()
+	else:
+		quit_to_menu()
+
+func post_map_load() -> void:
+
+	if hud_scene == null:
+		hud_scene = load("res://scenes/hud.tscn").instantiate()
+	
+	add_child(hud_scene)
+
+	if pause_screen == null:
+		pause_screen = load("res://scenes/pause_screen.tscn").instantiate()
 	
 	game_state = GameState.PLAYING
+
+	if multiplayer.multiplayer_peer == null:
+		var peer = ENetMultiplayerPeer.new()
+		peer.create_server(7777, 32)
+		multiplayer.multiplayer_peer = peer
 
 func quit_to_menu() -> void:
 	if hud_scene:
@@ -107,6 +122,5 @@ func toggle_pause() -> void:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _process(delta):
-
 	if Input.is_action_just_pressed("pause"):
 		toggle_pause()
