@@ -121,7 +121,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 	if not was_grounded and is_on_floor():
-		print("Landed")
+#		print("Landed")
 		landed.emit()
 
 func update_crouch_state(delta: float) -> void:

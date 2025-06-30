@@ -1,0 +1,114 @@
+[gd_scene load_steps=19 format=3 uid="uid://cuv40qpvh4gsd"]
+
+[ext_resource type="Script" uid="uid://b5oy5evtvmf61" path="res://scripts/character_controller.gd" id="1_sd3sa"]
+[ext_resource type="Script" uid="uid://iq178sv0uotu" path="res://scripts/utils/ledge_detection_settings.gd" id="2_m2qjg"]
+[ext_resource type="Script" uid="uid://c1uuq3so0bimi" path="res://scripts/actors/actor.gd" id="3_llb5v"]
+[ext_resource type="Script" uid="uid://b2une4s4vjs5w" path="res://scripts/player/player_camera.gd" id="4_x0bak"]
+[ext_resource type="Script" uid="uid://sipuedcb1j6y" path="res://scripts/player/player_audio.gd" id="5_lulei"]
+[ext_resource type="AudioStream" uid="uid://dj3twgkeo5nn4" path="res://sounds/jump.wav" id="6_edtk3"]
+[ext_resource type="AudioStream" uid="uid://defshh1hlwu1d" path="res://sounds/Footstep Concrete Running 1_01.wav" id="7_q2wkl"]
+[ext_resource type="AudioStream" uid="uid://j2l844kus7m3" path="res://sounds/Footstep Concrete Running 1_02.wav" id="8_f2e50"]
+[ext_resource type="AudioStream" uid="uid://cgl22nkoy1hqk" path="res://sounds/Footstep Concrete Running 1_03.wav" id="9_22xyk"]
+[ext_resource type="AudioStream" uid="uid://ch54p3lv22pde" path="res://sounds/Footstep Concrete Running 1_04.wav" id="10_r3tw4"]
+[ext_resource type="AudioStream" uid="uid://dqh07ks71o1ri" path="res://sounds/Footstep Concrete Running 1_05.wav" id="11_nmymu"]
+[ext_resource type="Script" uid="uid://cwjmee3wssfo" path="res://scripts/player/player_inputs.gd" id="12_gf0v6"]
+
+[sub_resource type="Resource" id="Resource_oyt15"]
+script = ExtResource("2_m2qjg")
+min_ledge_width = 1.0
+max_surface_raycast_steps = 30
+max_surface_raycast_step_interval = 0.1
+min_distance_to_ground = 0.05
+clearance_height = 1.5
+obstruction_check_size = 0.1
+obstruction_layers = 1
+metadata/_custom_type_script = "uid://iq178sv0uotu"
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_8rb0w"]
+radius = 0.25
+height = 1.85
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sd3sa"]
+radius = 0.25
+height = 0.85
+
+[sub_resource type="AudioStreamPolyphonic" id="AudioStreamPolyphonic_8rb0w"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_lulei"]
+streams_count = 5
+stream_0/stream = ExtResource("7_q2wkl")
+stream_1/stream = ExtResource("8_f2e50")
+stream_2/stream = ExtResource("9_22xyk")
+stream_3/stream = ExtResource("10_r3tw4")
+stream_4/stream = ExtResource("11_nmymu")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_8rb0w"]
+streams_count = 4
+stream_0/stream = ExtResource("7_q2wkl")
+stream_1/stream = ExtResource("8_f2e50")
+stream_2/stream = ExtResource("9_22xyk")
+stream_3/stream = ExtResource("10_r3tw4")
+
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("collision_default", "collision_crouched")]
+transform = Transform3D(-0.990703, 0, -0.136044, 0, 1, 0, 0.136044, 0, -0.990703, 0, 0, 0)
+safe_margin = 0.005
+script = ExtResource("1_sd3sa")
+collision_default = NodePath("CollisionDefault")
+gravity = 15.0
+walk_speed = 3.5
+acceleration = 10.0
+stop_speed = 5.0
+collision_crouched = NodePath("CollisionCrouched")
+crouch_speed = 2.8
+crouch_time = 0.3
+max_air_speed = 2.0
+jump_velocity = 1.5
+step_in_air = true
+step_height = 0.75
+step_height_air = 0.6
+step_offset = 0.2
+step_safe_margin = 0.001
+step_ledge_dist = 1.5
+step_climb_speed_multi = 4.0
+climb_ledge_dist = 1.5
+climb_speed = 5.0
+climbing_end_distance = 0.5
+climb_ledge_min_height = 1.5
+ledge_detection_settings = SubResource("Resource_oyt15")
+
+[node name="PlayerActor" type="Node3D" parent="." node_paths=PackedStringArray("character", "audio")]
+script = ExtResource("3_llb5v")
+character = NodePath("..")
+audio = NodePath("../Camera3D/PlayerAudio")
+default_flags = Array[int]([512, 16384, 32768, 65536, 131072])
+metadata/_custom_type_script = "uid://c1uuq3so0bimi"
+
+[node name="CollisionDefault" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.925, 0)
+shape = SubResource("CapsuleShape3D_8rb0w")
+
+[node name="CollisionCrouched" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.425, 0)
+shape = SubResource("CapsuleShape3D_sd3sa")
+
+[node name="Camera3D" type="Camera3D" parent="." node_paths=PackedStringArray("player_character")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+script = ExtResource("4_x0bak")
+player_character = NodePath("..")
+strafe_lean_range = 5.0
+strafe_lean_speed = 20.0
+
+[node name="PlayerAudio" type="AudioStreamPlayer3D" parent="Camera3D" node_paths=PackedStringArray("actor")]
+stream = SubResource("AudioStreamPolyphonic_8rb0w")
+script = ExtResource("5_lulei")
+actor = NodePath("../../PlayerActor")
+jump_sound = ExtResource("6_edtk3")
+landed_sound = SubResource("AudioStreamRandomizer_lulei")
+footstep_sound = SubResource("AudioStreamRandomizer_8rb0w")
+
+[node name="PlayerInputs" type="Node3D" parent="." node_paths=PackedStringArray("actor", "character", "fps_camera")]
+script = ExtResource("12_gf0v6")
+actor = NodePath("../PlayerActor")
+character = NodePath("..")
+fps_camera = NodePath("../Camera3D")
+joypad_sensitivity = 5.0

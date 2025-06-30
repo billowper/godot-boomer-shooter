@@ -1,19 +1,22 @@
-class_name Wander
+class_name FollowTarget
 extends AI_Action
 
-var _radius: Callable
-
-func _init(get_radius: Callable) -> void:
-	_radius = get_radius
-
 func start(_user: AI_Actor) -> void: 
-	var rad = _radius.call() as float
-	var target_position = _user.global_position + Vector3(randf_range(-rad, rad), 0, randf_range(-rad, rad))
-	_user.nav_agent.target_position = target_position
+
+	if _user.senses.current_target == null:
+		self._status = AI_Schedule.ExecutionStatus.Failed
+		return
+
+	print("follow " + _user.senses.current_target.name)
+
+	_user.nav_agent.target_position = _user.senses.current_target.global_position
 	_user.nav_agent.target_desired_distance = 2.0
 	super.start(_user)
 
 func on_execute(_user: AI_Actor) -> AI_Schedule.ExecutionStatus:
+
+	if _user.senses.current_target == null:
+		return AI_Schedule.ExecutionStatus.Failed
 
 	match _status:
 		AI_Schedule.ExecutionStatus.Running:

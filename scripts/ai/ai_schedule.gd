@@ -15,6 +15,7 @@ var _next_schedule: AI_Schedule = null
 var _action_index: = 0
 var _cooldown: = 0.0
 var _time_since_active: TimeSince = TimeSince.new()
+var _break_conditions: Array = []
 
 var status: ExecutionStatus = ExecutionStatus.NotStarted
 
@@ -27,6 +28,10 @@ func set_next(next: AI_Schedule) -> AI_Schedule:
 
 func with_cooldown(cooldown: float) -> AI_Schedule:
 	_cooldown = cooldown
+	return self
+
+func with_break_condition(condition_name: String, predicate: Callable) -> AI_Schedule:
+	_break_conditions.append(AI_Condition.new(predicate, condition_name))
 	return self
 
 func has_cooldown_passed() -> bool:
@@ -47,7 +52,14 @@ func start(_user: AI_Actor)	-> void:
 	action.start(_user)
 
 func execute(_user: AI_Actor, delta: float) -> AI_Schedule.ExecutionStatus:
+
 	var action: AI_Action = _actions[_action_index]
+
+	for condition in _break_conditions:
+		if condition.check(_user):
+			action.on_stop(_user)
+			print(_name + " hit break condition: " + condition.name)
+			return ExecutionStatus.Break
 
 	if status == ExecutionStatus.Running:
 		status = action.execute(_user, delta)

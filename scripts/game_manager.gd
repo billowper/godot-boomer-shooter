@@ -66,11 +66,23 @@ func load_map(map_name: String) -> void:
 		current_map_scene.process_mode = PROCESS_MODE_PAUSABLE
 		add_child(current_map_scene)
 		game_state = GameState.PLAYING
+		await get_tree().physics_frame 
 		post_map_load()
 	else:
 		quit_to_menu()
 
 func post_map_load() -> void:
+
+	var player = load("res://prefabs/player.tscn").instantiate() as Node3D
+	
+	current_map_scene.add_child(player)
+
+	var spawn_points = current_map_scene.get_tree().get_nodes_in_group("spawn_points")
+	
+	if spawn_points.size() > 0:
+		var sp = spawn_points.pick_random()
+		player.global_position = sp.global_position
+		player.global_rotation = sp.global_rotation
 
 	if hud_scene == null:
 		hud_scene = load("res://scenes/hud.tscn").instantiate()

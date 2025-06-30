@@ -71,7 +71,6 @@ func hear() -> void:
 		_recent_sound_events.clear() # React to one sound event cluster, then clear
 
 func see() -> void:
-	current_target = null # Reset visual target each frame
 	var actors = get_tree().get_nodes_in_group("actors")
 	var space_state = get_world_3d().direct_space_state
 
@@ -118,3 +117,5 @@ func see() -> void:
 	
 	if closest_visible_target:
 		current_target = closest_visible_target
+	else:
+		current_target = null 

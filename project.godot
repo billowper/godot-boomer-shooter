@@ -40,6 +40,10 @@ project/assembly_name="New Game Project"
 
 enabled=PackedStringArray("res://addons/func_godot/plugin.cfg", "res://addons/imgui-godot/plugin.cfg", "res://addons/signal_gizmo/plugin.cfg")
 
+[global_group]
+
+spawn_points=""
+
 [input]
 
 move_forward={
