@@ -107,14 +107,14 @@ func see() -> void:
 		var result = space_state.intersect_ray(query)
 
 		if result.is_empty(): # empty means no obstacles in the way
-			DebugDraw3D.draw_line(global_position, ray_target_pos, Color.GREEN)
+			# DebugDraw3D.draw_line(global_position, ray_target_pos, Color.GREEN)
 			var dist_sq = global_position.distance_squared_to(target_actor.global_position)
 			if dist_sq < min_dist_sq:
 				min_dist_sq = dist_sq
 				closest_visible_target = target_actor
-		else:
-			print("%s cannot see %s due to an obstacle." % [name, target_actor.name])
-			DebugDraw3D.draw_line(global_position, ray_target_pos, Color.RED)
+		# else:
+			# print("%s cannot see %s due to an obstacle." % [name, target_actor.name])
+			# DebugDraw3D.draw_line(global_position, ray_target_pos, Color.RED)
 	
 	if closest_visible_target:
 		current_target = closest_visible_target

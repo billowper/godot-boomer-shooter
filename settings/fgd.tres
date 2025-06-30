@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="FuncGodotFGDFile" load_steps=5 format=3 uid="uid://bx4g7ojuf1560"]
+
+[ext_resource type="Resource" uid="uid://crgpdahjaj" path="res://addons/func_godot/fgd/func_godot_fgd.tres" id="1_6pw3a"]
+[ext_resource type="Script" uid="uid://dradepdk5niix" path="res://addons/func_godot/src/fgd/func_godot_fgd_file.gd" id="1_gb8ww"]
+[ext_resource type="Resource" uid="uid://cwxjoqix4fgu2" path="res://settings/func_button.tres" id="2_gdbn0"]
+[ext_resource type="Resource" uid="uid://cixwwevfagrn5" path="res://settings/func_geo.tres" id="3_cvg5v"]
+
+[resource]
+script = ExtResource("1_gb8ww")
+export_file = false
+target_map_editor = 1
+fgd_name = "FuncGodot"
+base_fgd_files = Array[Resource]([ExtResource("1_6pw3a")])
+entity_definitions = Array[Resource]([ExtResource("2_gdbn0"), ExtResource("3_cvg5v")])
+metadata/_custom_type_script = "uid://dradepdk5niix"

@@ -48,6 +48,7 @@ signal landed
 
 var jump_requested := false
 var wish_direction := Vector3.ZERO
+var look_direction := Vector3.ZERO
 var crouch_requested := false
 var walk_requested := false
 var climb_requested := false
@@ -73,10 +74,21 @@ func set_inputs(is_crouching_requested: bool, is_jump_requested: bool, is_climb_
 	self.walk_requested = is_walk_requested
 	self.climb_requested = is_climb_requested
 
+func set_wish_dir(wish_dir: Vector3) -> void:
+	self.wish_direction = wish_dir
+
+func set_look_dir(look_dir: Vector3) -> void:
+	self.look_direction = look_dir
+
 func _ready():
 	collision_crouched.disabled = true;
+	look_direction = transform.basis.z
 
 func _physics_process(delta: float) -> void:
+
+	var character_look_target = global_position + Vector3(look_direction.x, 0, look_direction.z)
+
+	self.look_at(character_look_target, Vector3.UP)
 
 	update_crouch_state(delta)
 

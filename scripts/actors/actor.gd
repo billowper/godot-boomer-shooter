@@ -1,5 +1,5 @@
 class_name Actor
-extends Node3D
+extends Entity
 
 enum ActorFlags{
 	NO_FLAGS = 0,
@@ -69,7 +69,6 @@ func _ready():
 	on_ready()
 
 func on_ready() -> void:
-	# Override this method in subclasses to perform additional setup
 	pass
 
 # --------------------------------------- health
