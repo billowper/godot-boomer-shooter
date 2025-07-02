@@ -80,7 +80,6 @@ ledge_detection_settings = SubResource("Resource_oyt15")
 script = ExtResource("3_llb5v")
 character = NodePath("..")
 audio = NodePath("../Camera3D/PlayerAudio")
-default_flags = Array[int]([512, 16384, 32768, 65536, 131072])
 metadata/_custom_type_script = "uid://c1uuq3so0bimi"
 
 [node name="CollisionDefault" type="CollisionShape3D" parent="."]
@@ -105,6 +104,8 @@ actor = NodePath("../../PlayerActor")
 jump_sound = ExtResource("6_edtk3")
 landed_sound = SubResource("AudioStreamRandomizer_lulei")
 footstep_sound = SubResource("AudioStreamRandomizer_8rb0w")
+
+[node name="WeaponHolder" type="Node3D" parent="Camera3D"]
 
 [node name="PlayerInputs" type="Node3D" parent="." node_paths=PackedStringArray("actor", "character", "fps_camera")]
 script = ExtResource("12_gf0v6")

@@ -4,6 +4,7 @@ extends Node
 @export var actor : Actor
 @export var character: CharacterController
 @export var fps_camera: PlayerCamera
+@export var weapons: PlayerWeapons
 @export var mouse_look_sensitivity = 0.1
 @export var joypad_sensitivity = 1.0
 @export var interaction_distance = 10.0
@@ -24,7 +25,6 @@ func _input(event: InputEvent) -> void:
 
 		var horizontal_rotation_rads = deg_to_rad(-event.relative.x * mouse_look_sensitivity)
 		_look_dir = _look_dir.rotated(Vector3.UP, horizontal_rotation_rads)
-		# character.rotate_y(deg_to_rad(-event.relative.x * mouse_look_sensitivity))
 		var add_rotation = deg_to_rad(-event.relative.y * mouse_look_sensitivity)
 		fps_camera.rotation.x = clamp(fps_camera.rotation.x + add_rotation, deg_to_rad(-89), deg_to_rad(89))	
 
@@ -32,8 +32,8 @@ func _process(_delta: float) -> void:
 
 	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		return
-
-	# character controller input
+		
+	# character controller
 
 	var look_x = Input.get_axis("look_left", "look_right") 
 	var look_y = Input.get_axis("look_up", "look_down") 
@@ -41,7 +41,6 @@ func _process(_delta: float) -> void:
 	var rads = deg_to_rad(-look_x * joypad_sensitivity)
 	_look_dir = _look_dir.rotated(Vector3.UP, rads)
 
-	# character.rotate_y(deg_to_rad(-look_x * joypad_sensitivity))
 	var add_rotation = deg_to_rad(-look_y * joypad_sensitivity)
 	fps_camera.rotation.x = clamp(fps_camera.rotation.x + add_rotation, deg_to_rad(-89), deg_to_rad(89))
 
@@ -58,6 +57,14 @@ func _process(_delta: float) -> void:
 
 	character.set_inputs(crouch_requested, jump_requested, climb_requested, walk_requested, wish_direction)
 	character.set_look_dir(_look_dir)
+	
+	# weapons
+
+	var fire_was_pressed = Input.is_action_just_pressed("fire")
+	var fire_was_released = Input.is_action_just_released("fire")
+	var fire_is_held = Input.is_action_pressed("fire")
+
+	weapons.set_inputs(fire_was_pressed, fire_was_released, fire_is_held)
 
 func _physics_process(_delta: float) -> void:
 

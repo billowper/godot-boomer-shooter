@@ -13,6 +13,7 @@ extends Actor
 var _schedule_idle: Schedule_Idle = null
 var _schedule_wander: Schedule_Wander = null
 var _schedule_chase: Schedule_ChaseTarget = null
+var _schedule_investigate: Schedule_Investigate = null
 
 var _active_schedule: AI_Schedule = null
 
@@ -24,13 +25,16 @@ func setup_schedules() -> AI_Schedule:
 	_schedule_idle = Schedule_Idle.new(wait_time)
 	_schedule_wander = Schedule_Wander.new(_get_wander_radius)
 	_schedule_chase = Schedule_ChaseTarget.new()
+	_schedule_investigate = Schedule_Investigate.new()
+
+	senses.heard_sound.connect(_on_heard_sound)
 
 	_schedule_wander.set_next(_schedule_idle)
 	return _schedule_idle
 	
 func _physics_process(_delta: float):
-	senses.hear()
-	senses.see()
+	senses.hear(_delta)
+	senses.see(_delta)
 
 func _process(delta: float):
 	_think(delta)
@@ -68,6 +72,11 @@ func _set_active_schedule(schedule: AI_Schedule) -> void:
 		print(name + " new schedule: " + _active_schedule._name)
 		_active_schedule.start(self)
 
+func _on_heard_sound(sound_location: Vector3) -> void:
+	_schedule_investigate.target_pos = sound_location
+	if _active_schedule == _schedule_idle or _active_schedule == _schedule_wander:
+		_set_active_schedule(_schedule_investigate)
+
 class Schedule_Idle:
 	extends AI_Schedule
 	func _init(wait_time: float) -> void:
@@ -94,3 +103,16 @@ class Schedule_ChaseTarget:
 		add_action(Say.new("chasing!"))
 		add_action(FollowTarget.new())
 		super._init("Chase Target")
+		
+class Schedule_Investigate:
+	extends AI_Schedule
+	var target_pos: Vector3
+	func _init() -> void:
+
+		var pos_getter = func() -> Vector3: 
+			return target_pos		
+
+		add_action(Say.new("huh?"))
+		add_action(LookInDirection.new(pos_getter))
+		add_action(MoveToPosition.new(pos_getter))
+		super._init("Investigate")
