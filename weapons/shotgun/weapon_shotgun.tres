@@ -1,0 +1,84 @@
+[gd_resource type="Resource" script_class="Weapon" load_steps=16 format=3 uid="uid://sb0psgnng3ku"]
+
+[ext_resource type="Script" uid="uid://dblyk7pq7523h" path="res://scripts/weapons/weapon.gd" id="1_6bpku"]
+[ext_resource type="Script" uid="uid://dunv2f27maa0u" path="res://scripts/animation/durational_animation.gd" id="1_wls1x"]
+[ext_resource type="Script" uid="uid://bmfb4gjtsaenn" path="res://scripts/animation/look_animation.gd" id="2_ubrss"]
+[ext_resource type="Script" uid="uid://d28kqn231r4ux" path="res://scripts/weapons/projectile_hitscan.gd" id="3_gleqw"]
+[ext_resource type="PackedScene" uid="uid://bc430wwx138v1" path="res://weapons/shotgun/vm_shotgun.tscn" id="5_s5ws6"]
+[ext_resource type="Script" uid="uid://bwg48j14g8fj0" path="res://scripts/animation/view_model_animation.gd" id="6_wvk5t"]
+
+[sub_resource type="Resource" id="Resource_7tkgi"]
+script = ExtResource("1_wls1x")
+duration = 0.3
+metadata/_custom_type_script = "uid://dunv2f27maa0u"
+
+[sub_resource type="Resource" id="Resource_c6d5p"]
+script = ExtResource("1_wls1x")
+duration = 0.3
+metadata/_custom_type_script = "uid://dunv2f27maa0u"
+
+[sub_resource type="Resource" id="Resource_3dqud"]
+script = ExtResource("2_ubrss")
+duration = 0.3
+metadata/_custom_type_script = "uid://bmfb4gjtsaenn"
+
+[sub_resource type="Resource" id="Resource_u3y7o"]
+script = ExtResource("2_ubrss")
+duration = 0.3
+metadata/_custom_type_script = "uid://bmfb4gjtsaenn"
+
+[sub_resource type="Resource" id="Resource_3o6bj"]
+script = ExtResource("3_gleqw")
+max_range = 100.0
+collision_mask = 1
+damage = 10
+spread = 0.0
+projectile_count = 1
+metadata/_custom_type_script = "uid://d28kqn231r4ux"
+
+[sub_resource type="Resource" id="Resource_xw2mx"]
+script = ExtResource("1_wls1x")
+duration = 0.3
+metadata/_custom_type_script = "uid://dunv2f27maa0u"
+
+[sub_resource type="Resource" id="Resource_wtsfx"]
+script = ExtResource("1_wls1x")
+duration = 0.3
+metadata/_custom_type_script = "uid://dunv2f27maa0u"
+
+[sub_resource type="Resource" id="Resource_2qaxn"]
+script = ExtResource("6_wvk5t")
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, 0, 0)
+metadata/_custom_type_script = "uid://bwg48j14g8fj0"
+
+[sub_resource type="Resource" id="Resource_os4yl"]
+script = ExtResource("6_wvk5t")
+position = Vector3(0, 0, 0)
+rotation = Vector3(0, 0, 0)
+metadata/_custom_type_script = "uid://bwg48j14g8fj0"
+
+[resource]
+script = ExtResource("1_6bpku")
+view_model = ExtResource("5_s5ws6")
+projectile = SubResource("Resource_3o6bj")
+max_ammo = 120
+is_automatic = false
+rate_of_fire = 0.5
+projectile_count = 1
+damage = 10
+base_spread = 0.0
+max_spread = 0.2
+spread_increase_per_shot = 0.0
+spread_recovery_speed = 0.5
+anim_equip = SubResource("Resource_7tkgi")
+anim_holster = SubResource("Resource_c6d5p")
+idle_position_offset = Vector3(0, -0.26, -0.62)
+idle_rotation_offset = Vector3(0, 0, 0)
+view_model_animation = SubResource("Resource_2qaxn")
+view_model_animation_aiming = SubResource("Resource_os4yl")
+recoil_anim = SubResource("Resource_xw2mx")
+recoil_anim_aiming = SubResource("Resource_wtsfx")
+look_animation = SubResource("Resource_3dqud")
+look_animation_aiming = SubResource("Resource_u3y7o")
+metadata/_custom_type_script = "uid://dblyk7pq7523h"

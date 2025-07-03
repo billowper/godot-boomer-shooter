@@ -1,0 +1,6 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://kk3eycf00g0k"]
+
+[ext_resource type="Texture2D" uid="uid://6eom68cqghjd" path="res://weapons/shotgun/textures/Ucupaint shotgun Color.png" id="1_ve84h"]
+
+[resource]
+albedo_texture = ExtResource("1_ve84h")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=267 format=4 uid="uid://cb1dfpqib62ib"]
+[gd_scene load_steps=271 format=4 uid="uid://cb1dfpqib62ib"]
 
 [ext_resource type="Script" uid="uid://c2xsrwkajwuhq" path="res://addons/func_godot/src/map/func_godot_map.gd" id="1_0ach5"]
 [ext_resource type="Resource" uid="uid://bkhxcqsquw1yg" path="res://addons/func_godot/func_godot_default_map_settings.tres" id="2_m0bq0"]
@@ -14,7 +14,10 @@
 [ext_resource type="Texture2D" uid="uid://v24g4aa6kbv" path="res://sky/Panorama_Sky_18-512x512.png" id="12_e50gq"]
 [ext_resource type="Material" uid="uid://cbrgxheg66mp" path="res://textures/sw/sw_grate01.tres" id="12_gn8w5"]
 [ext_resource type="Material" uid="uid://bi8appmhc0m8e" path="res://textures/sw/sw_ceil01.tres" id="14_ssikm"]
+[ext_resource type="Script" uid="uid://csvsfc104lvvu" path="res://scripts/entities/pick_up.gd" id="17_ive4i"]
 [ext_resource type="PackedScene" uid="uid://d3jpgna3o3klx" path="res://prefabs/base_ai.tscn" id="17_x4bk7"]
+[ext_resource type="Resource" uid="uid://sb0psgnng3ku" path="res://weapons/shotgun/weapon_shotgun.tres" id="18_jxuf6"]
+[ext_resource type="PackedScene" uid="uid://bc430wwx138v1" path="res://weapons/shotgun/vm_shotgun.tscn" id="19_u88yd"]
 [ext_resource type="PackedScene" uid="uid://c4e3445efpm4b" path="res://prefabs/spawn_point.tscn" id="33_621en"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_8d14l"]
@@ -1010,6 +1013,8 @@ dof_blur_far_distance = 30.0
 dof_blur_far_transition = 20.0
 dof_blur_near_distance = 0.5
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_w07xk"]
+
 [node name="Node3D" type="Node3D"]
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
@@ -1770,3 +1775,16 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -10.64
 
 [node name="BaseAI" parent="." instance=ExtResource("17_x4bk7")]
 transform = Transform3D(1.31134e-07, 0, -1, 0, 1, 0, 1, 0, 1.31134e-07, -17.1028, 1.00202, 1.36704)
+
+[node name="PickUp_Shotgun" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.466672, 0)
+script = ExtResource("17_ive4i")
+weapon = ExtResource("18_jxuf6")
+spin_speed = 0.1
+metadata/_custom_type_script = "uid://csvsfc104lvvu"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickUp_Shotgun"]
+shape = SubResource("BoxShape3D_w07xk")
+debug_color = Color(0.667853, 0.34942, 0.933878, 0.42)
+
+[node name="shotgun2" parent="PickUp_Shotgun" instance=ExtResource("19_u88yd")]

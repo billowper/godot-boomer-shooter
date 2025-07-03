@@ -40,6 +40,9 @@ func _on_peer_connected() -> void:
 func _on_peer_disconnected() -> void:
 	Console.add_log("peer connected")
 
+func is_playing() -> bool:
+	return game_state == GameState.PLAYING
+
 func start_game() -> void:
 	load_map("m1")
 
@@ -134,5 +137,12 @@ func toggle_pause() -> void:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _process(delta):
+
 	if Input.is_action_just_pressed("pause"):
 		toggle_pause()
+
+	if Input.is_action_just_pressed("debug_toggle_cursor"):
+		if (Input.mouse_mode == Input.MOUSE_MODE_VISIBLE):
+			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		else:
+			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)

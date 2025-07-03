@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://cuv40qpvh4gsd"]
+[gd_scene load_steps=23 format=3 uid="uid://cuv40qpvh4gsd"]
 
 [ext_resource type="Script" uid="uid://b5oy5evtvmf61" path="res://scripts/character_controller.gd" id="1_sd3sa"]
 [ext_resource type="Script" uid="uid://iq178sv0uotu" path="res://scripts/utils/ledge_detection_settings.gd" id="2_m2qjg"]
@@ -12,6 +12,9 @@
 [ext_resource type="AudioStream" uid="uid://ch54p3lv22pde" path="res://sounds/Footstep Concrete Running 1_04.wav" id="10_r3tw4"]
 [ext_resource type="AudioStream" uid="uid://dqh07ks71o1ri" path="res://sounds/Footstep Concrete Running 1_05.wav" id="11_nmymu"]
 [ext_resource type="Script" uid="uid://cwjmee3wssfo" path="res://scripts/player/player_inputs.gd" id="12_gf0v6"]
+[ext_resource type="Script" uid="uid://c3a7yfjq8y01x" path="res://scripts/player/player_weapons.gd" id="12_m2qjg"]
+[ext_resource type="Script" uid="uid://dsu31766lfx85" path="res://scripts/animation/view_model_anim_controller.gd" id="13_llb5v"]
+[ext_resource type="Script" uid="uid://bbepjsgayxiap" path="res://scripts/player/player_pick_ups.gd" id="15_x0bak"]
 
 [sub_resource type="Resource" id="Resource_oyt15"]
 script = ExtResource("2_m2qjg")
@@ -49,8 +52,10 @@ stream_1/stream = ExtResource("8_f2e50")
 stream_2/stream = ExtResource("9_22xyk")
 stream_3/stream = ExtResource("10_r3tw4")
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_lulei"]
+size = Vector3(0.52832, 1.76596, 0.544922)
+
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("collision_default", "collision_crouched")]
-transform = Transform3D(-0.990703, 0, -0.136044, 0, 1, 0, 0.136044, 0, -0.990703, 0, 0, 0)
 safe_margin = 0.005
 script = ExtResource("1_sd3sa")
 collision_default = NodePath("CollisionDefault")
@@ -76,10 +81,9 @@ climbing_end_distance = 0.5
 climb_ledge_min_height = 1.5
 ledge_detection_settings = SubResource("Resource_oyt15")
 
-[node name="PlayerActor" type="Node3D" parent="." node_paths=PackedStringArray("character", "audio")]
+[node name="PlayerActor" type="Node3D" parent="." node_paths=PackedStringArray("character")]
 script = ExtResource("3_llb5v")
 character = NodePath("..")
-audio = NodePath("../Camera3D/PlayerAudio")
 metadata/_custom_type_script = "uid://c1uuq3so0bimi"
 
 [node name="CollisionDefault" type="CollisionShape3D" parent="."]
@@ -105,11 +109,44 @@ jump_sound = ExtResource("6_edtk3")
 landed_sound = SubResource("AudioStreamRandomizer_lulei")
 footstep_sound = SubResource("AudioStreamRandomizer_8rb0w")
 
-[node name="WeaponHolder" type="Node3D" parent="Camera3D"]
+[node name="WeaponHolder" type="Node3D" parent="Camera3D" node_paths=PackedStringArray("player_audio", "actor", "weapon_slot", "shoot_point", "view_model_anim_control")]
+script = ExtResource("12_m2qjg")
+player_audio = NodePath("../PlayerAudio")
+actor = NodePath("../../PlayerActor")
+weapon_slot = NodePath("ViewModelAnimationController/Offset/RecoilParent")
+shoot_point = NodePath("ViewModelAnimationController/Offset/RecoilParent/ShootPoint")
+view_model_anim_control = NodePath("ViewModelAnimationController")
 
-[node name="PlayerInputs" type="Node3D" parent="." node_paths=PackedStringArray("actor", "character", "fps_camera")]
+[node name="ViewModelAnimationController" type="Node3D" parent="Camera3D/WeaponHolder"]
+script = ExtResource("13_llb5v")
+root_transform = NodePath(".")
+recoil_transform = NodePath("Offset/RecoilParent")
+idle_offset_transform = NodePath("Offset")
+metadata/_custom_type_script = "uid://dsu31766lfx85"
+
+[node name="Offset" type="Node3D" parent="Camera3D/WeaponHolder/ViewModelAnimationController"]
+
+[node name="RecoilParent" type="Node3D" parent="Camera3D/WeaponHolder/ViewModelAnimationController/Offset"]
+
+[node name="ShootPoint" type="Node3D" parent="Camera3D/WeaponHolder/ViewModelAnimationController/Offset/RecoilParent"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.241718)
+
+[node name="PlayerInputs" type="Node3D" parent="." node_paths=PackedStringArray("actor", "character", "fps_camera", "weapons")]
 script = ExtResource("12_gf0v6")
 actor = NodePath("../PlayerActor")
 character = NodePath("..")
 fps_camera = NodePath("../Camera3D")
+weapons = NodePath("../Camera3D/WeaponHolder")
 joypad_sensitivity = 5.0
+
+[node name="PlayerPickUps" type="Area3D" parent="." node_paths=PackedStringArray("player_weapons", "actor")]
+monitorable = false
+script = ExtResource("15_x0bak")
+player_weapons = NodePath("../Camera3D/WeaponHolder")
+actor = NodePath("../PlayerActor")
+metadata/_custom_type_script = "uid://bbepjsgayxiap"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PlayerPickUps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.945419, 0)
+shape = SubResource("BoxShape3D_lulei")
+debug_color = Color(4.57242e-07, 0.650526, 0.0867447, 0.42)

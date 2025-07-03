@@ -17,6 +17,14 @@ func _ready():
 	actor.character.jumped.connect(self.on_jump)
 	actor.character.landed.connect(self.on_landed)
 
+func play_2d(sound: AudioStream) -> void:
+	if sound:
+		var player = AudioStreamPlayer2D.new()
+		player.stream = sound
+		player.play()
+		player.finished.connect(func(): player.queue_free())
+		add_child(player)
+
 func on_jump():
 	if jump_sound:
 		actor.play_sound(jump_sound)
