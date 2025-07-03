@@ -6,6 +6,7 @@ extends Node3D # Inherit from Node3D as this controls 3D transforms
 @export var recoil_transform: NodePath # Path to the transform that handles recoil
 @export var idle_offset_transform: NodePath # Path to the transform for idle offsets
 @export var attack_idle_timeout: float = 0.5 # Time before idle animation activates after attack
+@export var debug: bool = false
 
 # --- Public Properties ---
 # Check if the holster animation is active
@@ -16,18 +17,16 @@ func is_holster_animation_active() -> bool:
 func is_equip_anim_active() -> bool:
 	return m_equip_anim != null and m_equip_anim.get_progress_percentage() < 0.9
 
-func set_inputs(move_input: Vector2, look_input: Vector2, _is_aiming: bool, _velocity: Vector3,) -> void:
+func set_inputs(move_input: Vector2, look_input: Vector2, velocity: Vector3,) -> void:
 	_move_input = move_input
 	_look_input = look_input
-	_is_aiming = _is_aiming
-	_velocity = _velocity
+	_velocity = velocity
 
 
 # --- Private Member Variables ---
 var m_root_transform_node: Node3D
 var m_recoil_transform_node: Node3D
 var m_idle_offset_transform_node: Node3D
-
 
 var m_active_recoil: DurationalAnimation = null # Currently active recoil animation
 var m_vm_animation: ViewModelAnimation = null # Base view model animation settings
@@ -53,17 +52,20 @@ func _ready() -> void:
 	m_idle_offset_transform_node = get_node(idle_offset_transform)
 
 func _process(delta: float) -> void:
+
+	if debug:
+		_velocity = Vector3.ONE * 5
+		_move_input = Vector2(0, 1) # Simulate movement input
+
 	if m_vm_animation == null:
 		return
 
 	if m_is_holstered:
 		return
 
-	var delta_time = delta # Godot's _process delta is unscaled
-
 	# Handle holster animation
 	if m_holster_animation and m_holster_animation.is_active():
-		var anim_result = m_holster_animation.update_lerped(delta_time)
+		var anim_result = m_holster_animation.update_lerped(delta)
 		m_recoil_transform_node.position = anim_result["position"]
 		m_recoil_transform_node.quaternion = anim_result["rotation"]
 
@@ -78,7 +80,7 @@ func _process(delta: float) -> void:
 				  (m_equip_anim == null or not m_equip_anim.is_active())
 
 	if is_idle:
-		m_idle_timer += delta_time
+		m_idle_timer += delta
 	else:
 		m_idle_timer = 0.0
 
@@ -95,26 +97,26 @@ func _process(delta: float) -> void:
 		m_idle_offset_transform_node.position = Vector3.ZERO
 		m_idle_offset_transform_node.rotation = Vector3.ZERO
 	else:
-		m_idle_offset_transform_node.position = m_idle_offset_transform_node.position.slerp(target_pos_offset, delta_time * 3.0)
+		m_idle_offset_transform_node.position = m_idle_offset_transform_node.position.slerp(target_pos_offset, delta * 3.0)
 		# Quaternion.Euler is converted to Basis.from_euler and then get_rotation_quaternion()
 		m_idle_offset_transform_node.quaternion = m_idle_offset_transform_node.quaternion.slerp(
-			Basis.from_euler(target_rot_offset).get_rotation_quaternion(), delta_time * 3.0
+			Basis.from_euler(target_rot_offset).get_rotation_quaternion(), delta * 3.0
 		)
 
 	# --- Equip and Recoil Animations ---
 	if m_equip_anim and m_equip_anim.is_active():
-		var anim_result = m_equip_anim.update_lerped(delta_time)
+		var anim_result = m_equip_anim.update_lerped(delta)
 		m_recoil_transform_node.position = anim_result["position"]
 		m_recoil_transform_node.quaternion = anim_result["rotation"]
 	else:
 		if m_active_recoil and m_active_recoil.is_active():
-			var anim_result = m_active_recoil.update_continuous(delta_time)
+			var anim_result = m_active_recoil.update_continuous(delta)
 			m_recoil_transform_node.position = anim_result["position"]
 			m_recoil_transform_node.quaternion = anim_result["rotation"]
 		else:
 			# Lerp recoil back to zero if no active recoil
-			m_recoil_transform_node.position = m_recoil_transform_node.position.slerp(Vector3.ZERO, delta_time * 3.0)
-			m_recoil_transform_node.quaternion = m_recoil_transform_node.quaternion.slerp(Quaternion.IDENTITY, delta_time * 3.0)
+			m_recoil_transform_node.position = m_recoil_transform_node.position.slerp(Vector3.ZERO, delta * 3.0)
+			m_recoil_transform_node.quaternion = m_recoil_transform_node.quaternion.slerp(Quaternion.IDENTITY, delta * 3.0)
 
 	var current_vm_animation = m_vm_animation
 	if _is_aiming:
@@ -128,7 +130,7 @@ func _process(delta: float) -> void:
 
 	# var final_bob_multiplier = bob_multiplier * Game.get("Options", {}).get("Gameplay", {}).get("WeaponBobMultiplier", 1.0) # Placeholder
 	var final_bob_multiplier = bob_multiplier
-	var sway_position = current_vm_animation.bob.update_sway(delta_time, speed, speed, final_bob_multiplier)
+	var sway_position = current_vm_animation.bob.update_sway(delta, speed, speed, final_bob_multiplier)
 
 	m_root_transform_node.position = current_vm_animation.position + sway_position
 
@@ -137,9 +139,9 @@ func _process(delta: float) -> void:
 
 	var lean_multiplier = 1.0
 
-	local_euler_angles.z += current_vm_animation.lean.get_value(_move_input.x, lean_multiplier, delta_time)
-	local_euler_angles.y += current_vm_animation.horizontal_sway.get_value(_move_input.x, lean_multiplier, delta_time)
-	local_euler_angles.x += current_vm_animation.vertical_sway.get_value(_move_input.y, lean_multiplier, delta_time)
+	local_euler_angles.z += current_vm_animation.lean.get_value(_move_input.x, lean_multiplier, delta)
+	local_euler_angles.y += current_vm_animation.horizontal_sway.get_value(_move_input.x, lean_multiplier, delta)
+	local_euler_angles.x += current_vm_animation.vertical_sway.get_value(_move_input.y, lean_multiplier, delta)
 
 	# Apply rotation to the root transform
 	# Convert Euler angles to Quaternion for setting local_rotation
@@ -148,7 +150,7 @@ func _process(delta: float) -> void:
 # --- Event Handlers ---
 # Handles the weapon fired event, activating recoil animation.
 func on_weapon_fired(weapon: Weapon) -> void:
-	var recoil_anim = weapon.recoil_anim if _is_aiming else weapon.recoil_anim_aiming
+	var recoil_anim = weapon.recoil_anim_aiming if _is_aiming else weapon.recoil_anim
 
 	m_idle_offset_transform_node.position = Vector3.ZERO
 	m_idle_offset_transform_node.rotation = Vector3.ZERO
@@ -176,7 +178,7 @@ func set_weapon(weapon: Weapon) -> void:
 			if m_equip_anim:
 				m_equip_anim.activate(m_recoil_transform_node.position)
 		else:
-			# Clear all references if no equippable parameters
+			# Clear all references if no weapon
 			m_vm_animation = null
 			m_vm_animation_aiming = null
 			m_equip_anim = null

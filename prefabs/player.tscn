@@ -1,9 +1,10 @@
-[gd_scene load_steps=23 format=3 uid="uid://cuv40qpvh4gsd"]
+[gd_scene load_steps=24 format=3 uid="uid://cuv40qpvh4gsd"]
 
 [ext_resource type="Script" uid="uid://b5oy5evtvmf61" path="res://scripts/character_controller.gd" id="1_sd3sa"]
 [ext_resource type="Script" uid="uid://iq178sv0uotu" path="res://scripts/utils/ledge_detection_settings.gd" id="2_m2qjg"]
 [ext_resource type="Script" uid="uid://c1uuq3so0bimi" path="res://scripts/actors/actor.gd" id="3_llb5v"]
 [ext_resource type="Script" uid="uid://b2une4s4vjs5w" path="res://scripts/player/player_camera.gd" id="4_x0bak"]
+[ext_resource type="Resource" uid="uid://bw3dh47w5p1bm" path="res://player/camera_bob_walk.tres" id="5_edtk3"]
 [ext_resource type="Script" uid="uid://sipuedcb1j6y" path="res://scripts/player/player_audio.gd" id="5_lulei"]
 [ext_resource type="AudioStream" uid="uid://dj3twgkeo5nn4" path="res://sounds/jump.wav" id="6_edtk3"]
 [ext_resource type="AudioStream" uid="uid://defshh1hlwu1d" path="res://sounds/Footstep Concrete Running 1_01.wav" id="7_q2wkl"]
@@ -100,6 +101,8 @@ script = ExtResource("4_x0bak")
 player_character = NodePath("..")
 strafe_lean_range = 5.0
 strafe_lean_speed = 20.0
+camera_bob = ExtResource("5_edtk3")
+camera_bob_walk_multiplier = Vector2(0.5, 0.6)
 
 [node name="PlayerAudio" type="AudioStreamPlayer3D" parent="Camera3D" node_paths=PackedStringArray("actor")]
 stream = SubResource("AudioStreamPolyphonic_8rb0w")
@@ -109,27 +112,32 @@ jump_sound = ExtResource("6_edtk3")
 landed_sound = SubResource("AudioStreamRandomizer_lulei")
 footstep_sound = SubResource("AudioStreamRandomizer_8rb0w")
 
-[node name="WeaponHolder" type="Node3D" parent="Camera3D" node_paths=PackedStringArray("player_audio", "actor", "weapon_slot", "shoot_point", "view_model_anim_control")]
+[node name="WeaponHolder" type="Node3D" parent="Camera3D" node_paths=PackedStringArray("player_audio", "player_camera", "player_character", "actor", "weapon_slot", "shoot_point", "view_model_anim_control")]
 script = ExtResource("12_m2qjg")
 player_audio = NodePath("../PlayerAudio")
+player_camera = NodePath("..")
+player_character = NodePath("../..")
 actor = NodePath("../../PlayerActor")
-weapon_slot = NodePath("ViewModelAnimationController/Offset/RecoilParent")
-shoot_point = NodePath("ViewModelAnimationController/Offset/RecoilParent/ShootPoint")
-view_model_anim_control = NodePath("ViewModelAnimationController")
+weapon_slot = NodePath("Container/ViewModelAnimationController/Offset/RecoilParent")
+shoot_point = NodePath("Container/ShootPoint")
+view_model_anim_control = NodePath("Container/ViewModelAnimationController")
 
-[node name="ViewModelAnimationController" type="Node3D" parent="Camera3D/WeaponHolder"]
+[node name="Container" type="Node3D" parent="Camera3D/WeaponHolder"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.175, -0.735)
+
+[node name="ViewModelAnimationController" type="Node3D" parent="Camera3D/WeaponHolder/Container"]
 script = ExtResource("13_llb5v")
 root_transform = NodePath(".")
 recoil_transform = NodePath("Offset/RecoilParent")
 idle_offset_transform = NodePath("Offset")
 metadata/_custom_type_script = "uid://dsu31766lfx85"
 
-[node name="Offset" type="Node3D" parent="Camera3D/WeaponHolder/ViewModelAnimationController"]
+[node name="Offset" type="Node3D" parent="Camera3D/WeaponHolder/Container/ViewModelAnimationController"]
 
-[node name="RecoilParent" type="Node3D" parent="Camera3D/WeaponHolder/ViewModelAnimationController/Offset"]
+[node name="RecoilParent" type="Node3D" parent="Camera3D/WeaponHolder/Container/ViewModelAnimationController/Offset"]
 
-[node name="ShootPoint" type="Node3D" parent="Camera3D/WeaponHolder/ViewModelAnimationController/Offset/RecoilParent"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.241718)
+[node name="ShootPoint" type="Node3D" parent="Camera3D/WeaponHolder/Container"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.160001)
 
 [node name="PlayerInputs" type="Node3D" parent="." node_paths=PackedStringArray("actor", "character", "fps_camera", "weapons")]
 script = ExtResource("12_gf0v6")

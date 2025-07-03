@@ -27,6 +27,7 @@ func create(
 		var collider = result.collider
 		
 		print("hit object: ", collider)
+		DebugDraw3D.draw_line(origin, hit_position, Color.RED, 1.0)
 
 #        if collider:
 #            collider.apply_damage(damage, owner)

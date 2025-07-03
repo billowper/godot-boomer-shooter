@@ -1,9 +1,11 @@
 [gd_scene load_steps=3 format=3 uid="uid://bc430wwx138v1"]
 
 [ext_resource type="PackedScene" uid="uid://b1dcnifi4o2g3" path="res://weapons/shotgun/shotgun.blend" id="1_by8co"]
-[ext_resource type="Material" uid="uid://kk3eycf00g0k" path="res://weapons/shotgun/mat_shotgun.tres" id="2_by8co"]
+[ext_resource type="Material" uid="uid://dxt4c47yd0jy7" path="res://weapons/shotgun/mat_shotgun_vm.tres" id="2_by8co"]
 
-[node name="shotgun2" instance=ExtResource("1_by8co")]
+[node name="vm_shotgun" instance=ExtResource("1_by8co")]
 
 [node name="shotgun" parent="." index="0"]
+transform = Transform3D(0.8, 0, 0, 0, 0.799239, 0.0348955, 0, -0.0348955, 0.799239, 0, -0.0193075, 0.155314)
+layers = 524288
 material_override = ExtResource("2_by8co")

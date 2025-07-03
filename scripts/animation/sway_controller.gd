@@ -17,19 +17,22 @@ var _position: Vector3 = Vector3.ZERO # Internal position for the sway effect
 # speed_x: The speed multiplier for the X-axis sway.
 # speed_y: The speed multiplier for the Y-axis sway.
 # range_multiplier: A multiplier applied to the range of the sway.
-func update_sway(delta_time: float, speed_x: float, speed_y: float, range_multiplier: float) -> Vector3:
+func update_sway(delta_time: float, 
+	speed_x: float, 
+	speed_y: float, 
+	range_multiplier: float,
+	speed_multiplier: float = 1.0) -> Vector3:
 	var new_sway_position: Vector3 = Vector3.ZERO
 
 	# Calculate X-axis sway if speed_x is greater than 0
 	if speed_x > 0:
-		new_sway_position.x = sway_x.get_value(delta_time, speed_x, range_multiplier)
+		new_sway_position.x = sway_x.get_value(delta_time, speed_x * speed_multiplier, range_multiplier)
 
 	# Calculate Y-axis sway if speed_y is greater than 0
 	if speed_y > 0:
-		new_sway_position.y = sway_y.get_value(delta_time, speed_y, range_multiplier)
+		new_sway_position.y = sway_y.get_value(delta_time, speed_y * speed_multiplier, range_multiplier)
 
 	# Lerp the current position towards the new sway position
 	_position = _position.lerp(new_sway_position, delta_time * lerp_speed)
 
 	return _position
-

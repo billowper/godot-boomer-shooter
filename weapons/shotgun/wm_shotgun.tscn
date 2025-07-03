@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://bdq61s6c0hbry"]
+
+[ext_resource type="PackedScene" uid="uid://b1dcnifi4o2g3" path="res://weapons/shotgun/shotgun.blend" id="1_wbler"]
+[ext_resource type="Material" uid="uid://kk3eycf00g0k" path="res://weapons/shotgun/mat_shotgun.tres" id="2_ky7ae"]
+
+[node name="wm_shotgun" instance=ExtResource("1_wbler")]
+
+[node name="shotgun" parent="." index="0"]
+material_override = ExtResource("2_ky7ae")

@@ -13,38 +13,50 @@ extends Node
 
 static var _local: PlayerInputs
 
-var _look_dir: Vector3 = Vector3.ZERO
+var look_direction: Vector3 = Vector3.ZERO
+var wish_direction: Vector3 = Vector3.ZERO
+var _move_input: Vector2	= Vector2.ZERO
+var _look_input: Vector2	= Vector2.ZERO
+var m_lookAnimation : LookAnimation = null
 
 func _ready():
 	_local = self
-	_look_dir = character.transform.basis.z
+	look_direction = character.transform.basis.z
+	weapons.fired.connect(on_weapon_fired)
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 
 		var horizontal_rotation_rads = deg_to_rad(-event.relative.x * mouse_look_sensitivity)
-		_look_dir = _look_dir.rotated(Vector3.UP, horizontal_rotation_rads)
+		look_direction = look_direction.rotated(Vector3.UP, horizontal_rotation_rads)
 		var add_rotation = deg_to_rad(-event.relative.y * mouse_look_sensitivity)
 		fps_camera.rotation.x = clamp(fps_camera.rotation.x + add_rotation, deg_to_rad(-89), deg_to_rad(89))	
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 
 	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		return
 		
-	# character controller
+	# look input
 
 	var look_x = Input.get_axis("look_left", "look_right") 
-	var look_y = Input.get_axis("look_up", "look_down") 
+	var look_y = Input.get_axis("look_up", "look_down")
+	_look_input = Vector2(look_x, look_y)
+	
+	if m_lookAnimation and m_lookAnimation.is_active():
+		_look_input += m_lookAnimation.get_look_vector(delta)
 
 	var rads = deg_to_rad(-look_x * joypad_sensitivity)
-	_look_dir = _look_dir.rotated(Vector3.UP, rads)
+	look_direction = look_direction.rotated(Vector3.UP, rads)
 
 	var add_rotation = deg_to_rad(-look_y * joypad_sensitivity)
+
 	fps_camera.rotation.x = clamp(fps_camera.rotation.x + add_rotation, deg_to_rad(-89), deg_to_rad(89))
 
-	var move_direction = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
+	# move input
+
+	_move_input = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
 	
 	var jump_requested = false
 	if Input.is_action_just_pressed("jump"):
@@ -52,24 +64,20 @@ func _process(_delta: float) -> void:
 
 	var crouch_requested = Input.is_action_pressed("crouch")
 	var walk_requested = Input.is_action_pressed("walk")
-	var wish_direction := (character.transform.basis * Vector3(move_direction.x, 0, move_direction.y)).normalized()
 	var climb_requested = Input.is_action_pressed("jump") and wish_direction.length() > 0.1 and wish_direction.normalized().dot(-character.transform.basis.z) > 0
 
+	wish_direction = (character.transform.basis * Vector3(_move_input.x, 0, _move_input.y)).normalized()
+
 	character.set_inputs(crouch_requested, jump_requested, climb_requested, walk_requested, wish_direction)
-	character.set_look_dir(_look_dir)
+	character.set_look_dir(look_direction)
 	
-	# weapons
-
-	var fire_was_pressed = Input.is_action_just_pressed("fire")
-	var fire_was_released = Input.is_action_just_released("fire")
-	var fire_is_held = Input.is_action_pressed("fire")
-
-	weapons.set_inputs(fire_was_pressed, fire_was_released, fire_is_held)
 
 func _physics_process(_delta: float) -> void:
 
 	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		return
+
+	# use interact 
 
 	var origin = fps_camera.global_position
 	var ray_target_pos = origin + (-fps_camera.global_basis.z * interaction_distance)
@@ -85,6 +93,14 @@ func _physics_process(_delta: float) -> void:
 	
 	if Input.is_action_just_pressed("use"):
 		try_use_entity(entity)
+		
+	# weapons
+
+	var fire_was_pressed = Input.is_action_just_pressed("fire")
+	var fire_was_released = Input.is_action_just_released("fire")
+	var fire_is_held = Input.is_action_pressed("fire")
+
+	weapons.set_inputs(fire_was_pressed, fire_was_released, fire_is_held, _move_input, _look_input, character.velocity)
 
 func try_use_entity(entity: Entity) -> void:
 	if entity == null:
@@ -93,3 +109,8 @@ func try_use_entity(entity: Entity) -> void:
 	entity.use()
 	print("used " + entity.name)
 			 
+func on_weapon_fired(weapon: Weapon) -> void:
+	# var recoil_anim = weapon.recoil_view_aiming_anim if is_aiming else weapon.recoil_view_anim
+	m_lookAnimation = weapon.recoil_view_anim
+	if m_lookAnimation:
+		m_lookAnimation.activate()

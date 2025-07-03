@@ -29,9 +29,9 @@ extends Resource
 @export var anim_holster: DurationalAnimation = DurationalAnimation.new()
 @export var idle_position_offset: Vector3
 @export var idle_rotation_offset: Vector3
-@export var view_model_animation: ViewModelAnimation
-@export var view_model_animation_aiming: ViewModelAnimation
-@export var recoil_anim: DurationalAnimation
-@export var recoil_anim_aiming: DurationalAnimation
-@export var look_animation: LookAnimation
-@export var look_animation_aiming: LookAnimation
+@export var view_model_animation: ViewModelAnimation = ViewModelAnimation.new()
+@export var view_model_animation_aiming: ViewModelAnimation = ViewModelAnimation.new()
+@export var recoil_anim: DurationalAnimation = DurationalAnimation.new()
+@export var recoil_anim_aiming: DurationalAnimation = DurationalAnimation.new()
+@export var recoil_view_anim: LookAnimation = LookAnimation.new()
+@export var recoil_view_aiming_anim: LookAnimation = LookAnimation.new()

@@ -2,6 +2,8 @@ class_name PlayerWeapons
 extends Node
 
 @export var player_audio: PlayerAudio
+@export var player_camera: PlayerCamera
+@export var player_character: CharacterController
 @export var actor: Actor
 @export var weapon_slot: Node3D
 @export var shoot_point: Node3D
@@ -10,10 +12,20 @@ extends Node
 var active_weapon: Weapon = null
 var weapons: Array[Weapon] = []
 var _model: Node3D
+var is_aiming: bool = false
 
-func set_inputs(fire_was_pressed: bool, fire_was_released: bool, fire_is_held: bool) -> void:
+signal fired(weapon: Weapon)
+
+func set_inputs(fire_was_pressed: bool,
+	fire_was_released: bool, 
+	fire_is_held: bool,
+	move: Vector2,
+	look: Vector2,
+	velocity: Vector3) -> void:
 	if not active_weapon:
 		return
+
+	view_model_anim_control.set_inputs(move, look, player_character.velocity)
 		
 	if fire_was_pressed:
 		fire_weapon()
@@ -73,6 +85,8 @@ func fire_weapon() -> void:
 		get_fire_direction(),
 		actor
 	)
+
+	fired.emit(active_weapon)
 
 	view_model_anim_control.on_weapon_fired(active_weapon)
 

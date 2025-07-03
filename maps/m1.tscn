@@ -17,7 +17,7 @@
 [ext_resource type="Script" uid="uid://csvsfc104lvvu" path="res://scripts/entities/pick_up.gd" id="17_ive4i"]
 [ext_resource type="PackedScene" uid="uid://d3jpgna3o3klx" path="res://prefabs/base_ai.tscn" id="17_x4bk7"]
 [ext_resource type="Resource" uid="uid://sb0psgnng3ku" path="res://weapons/shotgun/weapon_shotgun.tres" id="18_jxuf6"]
-[ext_resource type="PackedScene" uid="uid://bc430wwx138v1" path="res://weapons/shotgun/vm_shotgun.tscn" id="19_u88yd"]
+[ext_resource type="PackedScene" uid="uid://bdq61s6c0hbry" path="res://weapons/shotgun/wm_shotgun.tscn" id="19_x4bk7"]
 [ext_resource type="PackedScene" uid="uid://c4e3445efpm4b" path="res://prefabs/spawn_point.tscn" id="33_621en"]
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_8d14l"]
@@ -1771,7 +1771,7 @@ shadow_normal_bias = 2.62
 shadow_reverse_cull_face = true
 
 [node name="SpawnPoint" parent="." instance=ExtResource("33_621en")]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -10.6458, 0, 0)
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -7.12754, 0, 1.53788e-07)
 
 [node name="BaseAI" parent="." instance=ExtResource("17_x4bk7")]
 transform = Transform3D(1.31134e-07, 0, -1, 0, 1, 0, 1, 0, 1.31134e-07, -17.1028, 1.00202, 1.36704)
@@ -1780,11 +1780,12 @@ transform = Transform3D(1.31134e-07, 0, -1, 0, 1, 0, 1, 0, 1.31134e-07, -17.1028
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11, 0.466672, 0)
 script = ExtResource("17_ive4i")
 weapon = ExtResource("18_jxuf6")
-spin_speed = 0.1
+spin_speed = 5.0
 metadata/_custom_type_script = "uid://csvsfc104lvvu"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PickUp_Shotgun"]
 shape = SubResource("BoxShape3D_w07xk")
 debug_color = Color(0.667853, 0.34942, 0.933878, 0.42)
 
-[node name="shotgun2" parent="PickUp_Shotgun" instance=ExtResource("19_u88yd")]
+[node name="wm_shotgun" parent="PickUp_Shotgun" instance=ExtResource("19_x4bk7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.148329, 0)

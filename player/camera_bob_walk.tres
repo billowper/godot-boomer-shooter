@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="SwayController" load_steps=6 format=3 uid="uid://bw3dh47w5p1bm"]
+
+[ext_resource type="Script" uid="uid://meev4qwj1amp" path="res://scripts/animation/sway_controller.gd" id="1_d1h7i"]
+[ext_resource type="Script" uid="uid://dhx0ycgs8vgtv" path="res://scripts/animation/value_animator.gd" id="2_u7200"]
+
+[sub_resource type="Resource" id="Resource_edtk3"]
+script = ExtResource("2_u7200")
+range_value = 0.0
+speed = 1.0
+loop = true
+random = false
+range_min_max = Vector2(0, 0)
+metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
+
+[sub_resource type="Curve" id="Curve_r3tw4"]
+_limits = [-0.5, 0.5, 0.0, 1.0]
+_data = [Vector2(0, 0.5), 0.0, 0.0, 0, 0, Vector2(0.5, -0.5), 0.0, 0.0, 0, 0, Vector2(0.99999, 0.5), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Resource" id="Resource_nmymu"]
+script = ExtResource("2_u7200")
+range_value = 0.4
+speed = 4.0
+curve = SubResource("Curve_r3tw4")
+loop = true
+random = false
+range_min_max = Vector2(0, 0)
+metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
+
+[resource]
+script = ExtResource("1_d1h7i")
+sway_x = SubResource("Resource_edtk3")
+sway_y = SubResource("Resource_nmymu")
+lerp_speed = 5.0
+metadata/_custom_type_script = "uid://meev4qwj1amp"

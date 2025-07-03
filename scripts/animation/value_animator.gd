@@ -8,11 +8,13 @@ class_name ValueAnimator
 extends Resource # Extend Resource for easier saving/loading in Godot
 
 @export var range_value: float = 0.0 # Renamed from 'Range' to avoid conflict with GDScript keyword
+@export var speed: float = 1.0
+@export var curve: Curve = Curve.new() # AnimationCurve equivalent in Godot
+@export var loop: bool = true
+
+@export_group("random")
 @export var random: bool = false
 @export var range_min_max: Vector2 = Vector2(0.0, 0.0) # Used for random range
-@export var curve: Curve = Curve.new() # AnimationCurve equivalent in Godot
-@export var speed: float = 1.0
-@export var wrap_around: bool = true
 
 var _cycle_time: float = 0.0
 var _current_range: float = 0.0 # Stores the actual range used (either fixed or random)
@@ -39,7 +41,7 @@ func get_value(delta_time: float, speed_multiplier: float, range_multiplier: flo
 
 	_cycle_time += speed * delta_time * speed_multiplier
 
-	if wrap_around:
+	if loop:
 		# Ensure cycle_time wraps around between 0 and 1
 		if _cycle_time > 1.0:
 			_cycle_time -= 1.0

@@ -139,6 +139,10 @@ debug_toggle_cursor={
 ]
 }
 
+[layer_names]
+
+3d_render/layer_20="VM"
+
 [physics]
 
 3d/run_on_separate_thread=true

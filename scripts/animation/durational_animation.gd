@@ -82,5 +82,3 @@ func update_continuous(delta_time: float) -> Dictionary:
 	var rotation_quat = Basis.from_euler(rotation_euler).get_rotation_quaternion()
 
 	return {"position": _position, "rotation": rotation_quat}
-
-
