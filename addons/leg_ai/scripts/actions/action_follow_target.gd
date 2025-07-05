@@ -35,3 +35,6 @@ func on_execute(_user: AI_Actor) -> AI_Schedule.ExecutionStatus:
 			
 func on_stop(_user: AI_Actor) -> void:
 	_user.character.set_wish_dir(Vector3.ZERO)
+
+func _to_string() -> String:
+	return "FollowTarget"

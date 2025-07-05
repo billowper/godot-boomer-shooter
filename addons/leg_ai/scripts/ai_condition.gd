@@ -8,4 +8,6 @@ func _init(callable: Callable, condition_name: String) -> void:
 	_callable = callable
 
 func check(_user: AI_Actor) -> bool:
-	return _callable.call(_user)
+	if _callable:
+		return _callable.call(_user)
+	return false

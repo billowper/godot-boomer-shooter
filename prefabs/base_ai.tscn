@@ -4,9 +4,9 @@
 [ext_resource type="Script" uid="uid://iq178sv0uotu" path="res://scripts/utils/ledge_detection_settings.gd" id="2_qvg1t"]
 [ext_resource type="Script" uid="uid://dt6ig2q0sbmhi" path="res://scripts/actors/ai_actor.gd" id="3_m86lo"]
 [ext_resource type="Script" uid="uid://bqqdipcgq1dqt" path="res://addons/leg_ai/scripts/ai_senses.gd" id="4_84bwt"]
-[ext_resource type="PackedScene" uid="uid://c38qsjkigle70" path="res://models/character_lad01.glb" id="5_kon8a"]
-[ext_resource type="Material" uid="uid://b0j1yt3b23hgq" path="res://models/mat_gun.tres" id="6_imb1m"]
-[ext_resource type="Material" uid="uid://cdrxw060o2h22" path="res://models/mat_grunt.tres" id="7_w8o8i"]
+[ext_resource type="PackedScene" uid="uid://c38qsjkigle70" path="res://monsters/grunt/character_lad01.glb" id="5_kon8a"]
+[ext_resource type="Material" uid="uid://b0j1yt3b23hgq" path="res://monsters/grunt/mat_gun.tres" id="6_imb1m"]
+[ext_resource type="Material" uid="uid://cdrxw060o2h22" path="res://monsters/grunt/mat_grunt.tres" id="7_w8o8i"]
 
 [sub_resource type="Resource" id="Resource_oyt15"]
 script = ExtResource("2_qvg1t")

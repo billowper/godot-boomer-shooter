@@ -23,3 +23,5 @@ func on_execute(_user: AI_Actor) -> AI_Schedule.ExecutionStatus:
 
 	return _status
 		
+func _to_string() -> String:
+	return "LookInDirection"

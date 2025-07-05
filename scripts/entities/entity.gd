@@ -10,6 +10,23 @@ func _ready():
 func on_ready() -> void:
 	pass
 
+# --------------------------------------- damage
+
+signal on_hit(source: Entity, origin: Vector3, direction: Vector3, damage: int)
+
+func take_hit(source: Entity, origin: Vector3, direction: Vector3, damage: int) -> void:
+	if not is_alive():
+		return
+
+	print("Entity %s took hit from %s with damage %d" % [self.name, source, damage])
+	
+	if damage_sound:
+		play_sound(damage_sound)
+	
+	take_damage(damage)
+	
+	on_hit.emit(source, origin, direction, damage)
+
 # --------------------------------------- health
 
 @export_group("Stats")
@@ -34,8 +51,7 @@ func take_damage(amount: int) -> void:
 func die() -> void:
 	if death_sound:
 		play_sound(death_sound)
-	
-	# disable()
+
 	died.emit()
 
 func get_health() -> int:
@@ -81,7 +97,6 @@ func play_sound(sound: AudioStream) -> void:
 	if playback:
 		playback.play_stream(sound)
 		emitted_sound.emit(self, audio.global_position, audio.volume_db)
-
 
 # --------------------------------------- usage
 

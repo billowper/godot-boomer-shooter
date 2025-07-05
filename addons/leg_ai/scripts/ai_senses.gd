@@ -113,12 +113,14 @@ func update_target_data(data: Variant, target_actor: Actor, delta: float) -> voi
 
 	var dir_to_target = (target_actor.global_position - global_position)
 	if dir_to_target.length_squared() > vision_range * vision_range:
+		print("%s is too far from %s to see" % [actor_self.name, target_actor.name])
 		return
 
 	var facing_alignment = -global_transform.basis.z.dot(dir_to_target.normalized())
 	var is_facing_target = facing_alignment > 0
 
 	if not is_facing_target:
+		print("%s is not facing %s" % [actor_self.name, target_actor.name])
 		return
 
 	var angle_to_target = acos(facing_alignment)
@@ -126,6 +128,7 @@ func update_target_data(data: Variant, target_actor: Actor, delta: float) -> voi
 	var in_field_of_view = angle_to_target <= field_of_view_radians
 
 	if not in_field_of_view:
+		print("%s is not in field of view of %s" % [target_actor.name, actor_self.name])
 		return
 
 	var ray_target_pos = target_actor.global_position + Vector3.UP
@@ -137,6 +140,9 @@ func update_target_data(data: Variant, target_actor: Actor, delta: float) -> voi
 		data.visible = true
 		data.visible_time = prev_visible_time + delta
 		data.dist_sq = dist_sq
+		print("%s can see %s - %s" % [actor_self.name, target_actor.name, data.visible_time])
+	else:
+		print("%s cannot see %s due to obstruction" % [actor_self.name, target_actor.name])
 
 class SenseData:
 	var visible: bool = false

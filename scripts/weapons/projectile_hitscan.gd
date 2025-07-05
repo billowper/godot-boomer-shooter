@@ -29,11 +29,10 @@ func create(
 		print("hit object: ", collider)
 		DebugDraw3D.draw_line(origin, hit_position, Color.RED, 1.0)
 
-#        if collider:
-#            collider.apply_damage(damage, owner)
-#
-#        if hit_effect:
-#            hit_effect.create(hit_position, hit_normal, owner)
+		var hit_entity = Utils.find_entity_in_children(collider)
+
+		if hit_entity:
+			hit_entity.take_hit(owner as Entity, origin, direction, damage)
 
 		if hit_sound:
 			hit_sound.play(hit_position)

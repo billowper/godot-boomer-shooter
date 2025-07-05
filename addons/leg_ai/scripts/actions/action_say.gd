@@ -9,3 +9,6 @@ func _init(message: String) -> void:
 func on_execute(_user: AI_Actor) -> AI_Schedule.ExecutionStatus:
 	print(_user.name + ": " + _message)
 	return AI_Schedule.ExecutionStatus.Complete
+
+func _to_string() -> String:
+	return "Say: " + _message if _message else "Say: No Message"

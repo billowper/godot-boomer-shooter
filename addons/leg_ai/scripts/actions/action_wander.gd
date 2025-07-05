@@ -10,7 +10,7 @@ func start(_user: AI_Actor) -> void:
 	var rad = _radius.call() as float
 	var target_position = _user.global_position + Vector3(randf_range(-rad, rad), 0, randf_range(-rad, rad))
 	_user.nav_agent.target_position = target_position
-	_user.nav_agent.target_desired_distance = 2.0
+	_user.nav_agent.target_desired_distance = 1.5
 	super.start(_user)
 
 func on_execute(_user: AI_Actor) -> AI_Schedule.ExecutionStatus:
@@ -23,10 +23,14 @@ func on_execute(_user: AI_Actor) -> AI_Schedule.ExecutionStatus:
 			_user.character.set_wish_dir(wish_dir)
 			_user.character.set_look_dir(wish_dir)
 
-			if _user.nav_agent.is_target_reached():
+			var remaining_distance = _user.nav_agent.get_final_position().distance_to(_user.global_position)
+			if remaining_distance < _user.nav_agent.target_desired_distance:
 				return AI_Schedule.ExecutionStatus.Complete
 
 	return _status
 			
 func on_stop(_user: AI_Actor) -> void:
 	_user.character.set_wish_dir(Vector3.ZERO)
+
+func _to_string() -> String:
+	return "Wander"
