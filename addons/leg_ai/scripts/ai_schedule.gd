@@ -84,7 +84,7 @@ func evaluate(_user: AI_Actor) -> bool:
 		print(_name + " is not valid, skipping evaluation")
 		return false
 
-	if _time_since_active.get_elapsed_time() < _cooldown:
+	if _cooldown and _time_since_active.get_elapsed_time() < _cooldown.call() as float:
 		print(_name + " is on cooldown, elapsed: " + str(_time_since_active.get_elapsed_time()) + ", cooldown: " + str(_cooldown))
 		return false
 

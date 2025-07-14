@@ -30,7 +30,9 @@ func setup_schedules(schedules: Array[AI_Schedule]) -> AI_Schedule:
 	.with_break_condition(condition_has_target, _chase) \
 	.with_break_condition(condition_took_hit, _react_to_hit) \
 	.with_break_condition(condition_heard_sound, _investigate) \
-	.with_cooldown(3) \
+	.with_cooldown(func() -> float:
+		return randf_range(1.0, 3.0)
+	) \
 	.set_next(_idle)
 
 	schedules.append(_wander)
