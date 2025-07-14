@@ -13,11 +13,11 @@ extends Node
 
 static var _local: PlayerInputs
 
-var look_direction: Vector3 = Vector3.ZERO
-var wish_direction: Vector3 = Vector3.ZERO
-var _move_input: Vector2	= Vector2.ZERO
-var _look_input: Vector2	= Vector2.ZERO
-var m_lookAnimation : LookAnimation = null
+var look_direction: Vector3
+var wish_direction: Vector3
+var _move_input: Vector2
+var _look_input: Vector2
+var _lookAnimation: LookAnimation = null
 
 func _ready():
 	_local = self
@@ -27,14 +27,12 @@ func _ready():
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-
 		var horizontal_rotation_rads = deg_to_rad(-event.relative.x * mouse_look_sensitivity)
 		look_direction = look_direction.rotated(Vector3.UP, horizontal_rotation_rads)
 		var add_rotation = deg_to_rad(-event.relative.y * mouse_look_sensitivity)
 		fps_camera.rotation.x = clamp(fps_camera.rotation.x + add_rotation, deg_to_rad(-89), deg_to_rad(89))	
 
 func _process(delta: float) -> void:
-
 	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		return
 		
@@ -42,10 +40,11 @@ func _process(delta: float) -> void:
 
 	var look_x = Input.get_axis("look_left", "look_right") 
 	var look_y = Input.get_axis("look_up", "look_down")
+
 	_look_input = Vector2(look_x, look_y)
 	
-	if m_lookAnimation and m_lookAnimation.is_active():
-		_look_input += m_lookAnimation.get_look_vector(delta)
+	if _lookAnimation and _lookAnimation.is_active():
+		_look_input += _lookAnimation.get_look_vector(delta)
 
 	var rads = deg_to_rad(-look_x * joypad_sensitivity)
 	look_direction = look_direction.rotated(Vector3.UP, rads)
@@ -69,11 +68,9 @@ func _process(delta: float) -> void:
 	wish_direction = (character.transform.basis * Vector3(_move_input.x, 0, _move_input.y)).normalized()
 
 	character.set_inputs(crouch_requested, jump_requested, climb_requested, walk_requested, wish_direction)
-	character.set_look_dir(look_direction)
-	
+	character.set_look_dir(look_direction)	
 
 func _physics_process(_delta: float) -> void:
-
 	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
 		return
 
@@ -111,6 +108,6 @@ func try_use_entity(entity: Entity) -> void:
 			 
 func on_weapon_fired(weapon: Weapon) -> void:
 	# var recoil_anim = weapon.recoil_view_aiming_anim if is_aiming else weapon.recoil_view_anim
-	m_lookAnimation = weapon.recoil_view_anim
-	if m_lookAnimation:
-		m_lookAnimation.activate()
+	_lookAnimation = weapon.recoil_view_anim
+	if _lookAnimation:
+		_lookAnimation.activate()
