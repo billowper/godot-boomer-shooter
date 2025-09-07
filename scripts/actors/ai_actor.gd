@@ -35,6 +35,7 @@ func _on_died() -> void:
 	character.set_physics_process(false)
 	character.set_wish_dir(Vector3.ZERO)  
 	character.velocity = Vector3.ZERO  
+	character.disable_collision()
 	play_sound(death_sound) 
 	nav_agent.set_target_position(Vector3.ZERO)  # Reset navigation target
 	animations.set("parameters/state/transition_request", "dead")

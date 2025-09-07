@@ -71,6 +71,10 @@ static func try_find_ledge(space_state: PhysicsDirectSpaceState3D, exclude: Obje
 
 				if not surface_hit.is_empty():
 
+					if wall_hit.normal.dot(surface_hit.normal) > 0.99: # Check if normals are co-linear (surface is part of the wall)
+						result_info.summary = Results.SURFACE_OBSTRUCTED_NO_CLEARANCE
+						return result_info
+
 					ledge_midpoint = wall_hit.position
 					ledge_midpoint.y = surface_hit.position.y
 
@@ -85,6 +89,7 @@ static func try_find_ledge(space_state: PhysicsDirectSpaceState3D, exclude: Obje
 					
 					var box_transform := Transform3D()
 					box_transform.origin = box_center
+
 					# Orient the box to align with the wall and surface normals.
 					box_transform.basis = Basis.looking_at(-wall_hit.normal, surface_hit.normal)
 					

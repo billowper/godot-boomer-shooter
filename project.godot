@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Boomer Shooter"
-run/main_scene="uid://ke8p68otuems"
+run/main_scene="uid://bngbc1nqwmgfs"
 config/features=PackedStringArray("4.4", "Forward Plus")
 boot_splash/show_image=false
 boot_splash/fullsize=false
@@ -142,6 +142,7 @@ debug_toggle_cursor={
 [layer_names]
 
 3d_render/layer_20="VM"
+3d_physics/layer_1="World"
 
 [physics]
 

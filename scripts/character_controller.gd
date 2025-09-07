@@ -86,6 +86,8 @@ func _ready():
 
 func _physics_process(delta: float) -> void:
 
+	assert(not get_tree().paused, "Physics process is paused")
+
 	var character_look_target = global_position + Vector3(look_direction.x, 0, look_direction.z)
 
 	self.look_at(character_look_target, Vector3.UP)
@@ -331,3 +333,7 @@ func update_climb_movement(delta: float) -> void:
 		return
 
 	move_and_slide()
+
+func disable_collision() -> void:
+	collision_default.disabled = true
+	collision_crouched.disabled = true

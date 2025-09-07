@@ -35,7 +35,7 @@ static func add_log(msg: String, type: LogTypes = LogTypes.INFO) -> void:
 	instance.output.pop()
 
 	await instance.scroll_container.get_v_scroll_bar().changed
-	instance.scroll_container.scroll_vertical = instance.scroll_container.get_v_scroll_bar().max_value
+	instance.scroll_container.scroll_vertical = int(instance.scroll_container.get_v_scroll_bar().max_value)
 
 # ---------------------------------------------- private	
 
@@ -48,7 +48,14 @@ func _ready():
 	line_edit.text_submitted.connect(_on_submit)
 	container.visible = false
 	output.text = ""
-	
+	add_command("help", _cmd_help, false)
+
+func _cmd_help() -> void:
+	var help_text = "Available commands:\n"
+	for cmd in _commands:
+		help_text += "- " + cmd.name + "\n"
+	add_log(help_text, LogTypes.INFO)
+
 func _exit_tree() -> void:
 	instance = null
 

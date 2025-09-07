@@ -16,6 +16,8 @@ var hud_scene: Node = null
 var pause_screen: Node = null
 var current_map_scene: Node = null
 
+var _local_player
+
 func _ready() -> void:
 
 	add_child(load("res://scenes/dev_console.tscn").instantiate())
@@ -45,6 +47,9 @@ func is_playing() -> bool:
 
 func start_game() -> void:
 	load_map("m1")
+
+func get_local_player() -> Node3D:
+	return _local_player
 
 func join_game(address: String) -> void:
 	game_state = GameState.LOADING
@@ -77,6 +82,8 @@ func load_map(map_name: String) -> void:
 func post_map_load() -> void:
 
 	var player = load("res://prefabs/player.tscn").instantiate() as Node3D
+
+	_local_player = player
 	
 	current_map_scene.add_child(player)
 
@@ -124,6 +131,7 @@ func quit_to_menu() -> void:
 func toggle_pause() -> void:
 	if game_state == GameState.PLAYING:
 		game_state = GameState.PAUSED
+		get_tree().paused = true
 		current_map_scene.get_tree().paused = true
 		remove_child(hud_scene)
 		add_child(pause_screen)
@@ -131,7 +139,7 @@ func toggle_pause() -> void:
 
 	elif game_state == GameState.PAUSED:
 		game_state = GameState.PLAYING
-		current_map_scene.get_tree().paused = false
+		get_tree().paused = false
 		add_child(hud_scene)
 		remove_child(pause_screen)
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
