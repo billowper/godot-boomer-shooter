@@ -19,28 +19,26 @@ var current_map_scene: Node = null
 var _local_player
 
 func _ready() -> void:
-
-	add_child(load("res://scenes/dev_console.tscn").instantiate())
-	
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	menu_scene = load("res://scenes/menu.tscn").instantiate()
+	$%GameWorld.process_mode = Node.PROCESS_MODE_PAUSABLE
 
-	add_child(menu_scene)
+	menu_scene = load("res://scenes/menu.tscn").instantiate()
+	%UI.add_child(menu_scene)
 
 	game_state = GameState.MAIN_MENU
 
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 	
-	Console.add_command("quit", quit_to_menu, true)
-	Console.add_command("join", join_game, true)
-	Console.add_command("map", load_map, true)
+	LEG_Console.add_command("quit", quit_to_menu, true)
+	LEG_Console.add_command("join", join_game, true)
+	LEG_Console.add_command("map", load_map, true)
 
 func _on_peer_connected() -> void:
-	Console.add_log("peer connected")
+	LEG_Console.add_log("peer connected", LEG_Console.MessageType.Info)
 
 func _on_peer_disconnected() -> void:
-	Console.add_log("peer connected")
+	LEG_Console.add_log("peer disconnected", LEG_Console.MessageType.Info)
 
 func is_playing() -> bool:
 	return game_state == GameState.PLAYING
@@ -51,19 +49,21 @@ func start_game() -> void:
 func get_local_player() -> Node3D:
 	return _local_player
 
-func join_game(address: String) -> void:
+func join_game(address: String) -> bool:
 	game_state = GameState.LOADING
 
 	var peer = ENetMultiplayerPeer.new()
 	peer.create_client(address, 7777)
 	multiplayer.multiplayer_peer = peer
 
-func load_map(map_name: String) -> void:
+	return true
 
+func load_map(map_name: String) -> bool:
 	game_state = GameState.LOADING
-	remove_child(menu_scene)
+	%UI.remove_child(menu_scene)
 	
 	if current_map_scene:
+		%GameWorld.remove_child(current_map_scene)
 		current_map_scene.queue_free()
 		current_map_scene = null
 
@@ -72,20 +72,26 @@ func load_map(map_name: String) -> void:
 	if ResourceLoader.exists(res_path):
 		current_map_scene = load("res://maps/"+map_name+".tscn").instantiate()
 		current_map_scene.process_mode = PROCESS_MODE_PAUSABLE
-		add_child(current_map_scene)
+		%GameWorld.add_child(current_map_scene, true)
 		game_state = GameState.PLAYING
 		await get_tree().physics_frame 
 		post_map_load()
+		return true
 	else:
 		quit_to_menu()
 
+	return false	
+
 func post_map_load() -> void:
+	if _local_player:
+		_local_player.queue_free()
+		_local_player = null
 
 	var player = load("res://prefabs/player.tscn").instantiate() as Node3D
 
 	_local_player = player
-	
-	current_map_scene.add_child(player)
+
+	%GameWorld.add_child(player, true)
 
 	var spawn_points = current_map_scene.get_tree().get_nodes_in_group("spawn_points")
 	
@@ -96,8 +102,8 @@ func post_map_load() -> void:
 
 	if hud_scene == null:
 		hud_scene = load("res://scenes/hud.tscn").instantiate()
-	
-	add_child(hud_scene)
+
+	%UI.add_child(hud_scene)
 
 	if pause_screen == null:
 		pause_screen = load("res://scenes/pause_screen.tscn").instantiate()
@@ -109,7 +115,11 @@ func post_map_load() -> void:
 		peer.create_server(7777, 32)
 		multiplayer.multiplayer_peer = peer
 
-func quit_to_menu() -> void:
+func quit_to_menu() -> bool:
+	if _local_player:
+		_local_player.queue_free()
+		_local_player = null
+
 	if hud_scene:
 		hud_scene.queue_free()
 		hud_scene = null
@@ -122,35 +132,47 @@ func quit_to_menu() -> void:
 		current_map_scene.queue_free()
 		current_map_scene = null
 		
-	add_child(menu_scene)
+	%UI.add_child(menu_scene)
 
 	game_state = GameState.MAIN_MENU
+	get_tree().paused = false
 
 	multiplayer.multiplayer_peer = null
+	return true
 
 func toggle_pause() -> void:
 	if game_state == GameState.PLAYING:
 		game_state = GameState.PAUSED
 		get_tree().paused = true
-		current_map_scene.get_tree().paused = true
-		remove_child(hud_scene)
-		add_child(pause_screen)
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		%UI.remove_child(hud_scene)
+		%UI.add_child(pause_screen)
 
 	elif game_state == GameState.PAUSED:
 		game_state = GameState.PLAYING
 		get_tree().paused = false
-		add_child(hud_scene)
-		remove_child(pause_screen)
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+		%UI.add_child(hud_scene)
+		%UI.remove_child(pause_screen)
 
-func _process(delta):
+func _process(_delta):
+
+	if Input.mouse_mode != get_desired_mouse_mode():
+		Input.set_mouse_mode(get_desired_mouse_mode())
 
 	if Input.is_action_just_pressed("pause"):
 		toggle_pause()
 
+	if Input.is_action_just_pressed("toggle_console"):
+		LEG_Console.MainWindow.toggle()
+
 	if Input.is_action_just_pressed("debug_toggle_cursor"):
-		if (Input.mouse_mode == Input.MOUSE_MODE_VISIBLE):
-			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-		else:
-			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		_debug_show_cursor = not _debug_show_cursor
+
+func get_desired_mouse_mode() -> int:
+	if _debug_show_cursor or LEG_Console.MainWindow.is_visible() or game_state == GameState.PAUSED or game_state == GameState.MAIN_MENU: 
+		return Input.MOUSE_MODE_VISIBLE
+	elif game_state == GameState.PLAYING:
+		return Input.MOUSE_MODE_CAPTURED
+	else:
+		return Input.MOUSE_MODE_VISIBLE
+
+var _debug_show_cursor := false

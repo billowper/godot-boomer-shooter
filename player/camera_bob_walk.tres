@@ -5,11 +5,6 @@
 
 [sub_resource type="Resource" id="Resource_edtk3"]
 script = ExtResource("2_u7200")
-range_value = 0.0
-speed = 1.0
-loop = true
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [sub_resource type="Curve" id="Curve_r3tw4"]
@@ -22,14 +17,10 @@ script = ExtResource("2_u7200")
 range_value = 0.4
 speed = 4.0
 curve = SubResource("Curve_r3tw4")
-loop = true
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [resource]
 script = ExtResource("1_d1h7i")
 sway_x = SubResource("Resource_edtk3")
 sway_y = SubResource("Resource_nmymu")
-lerp_speed = 5.0
 metadata/_custom_type_script = "uid://meev4qwj1amp"

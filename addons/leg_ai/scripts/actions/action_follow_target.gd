@@ -7,7 +7,7 @@ func start(_user: AI_Actor) -> void:
 		self._status = AI_Schedule.ExecutionStatus.Failed
 		return
 
-	print("follow " + _user.senses.current_target.name)
+	LEG_Log.log("follow " + _user.senses.current_target.name)
 
 	_user.nav_agent.target_position = _user.senses.current_target.global_position
 	_user.nav_agent.target_desired_distance = 2.0

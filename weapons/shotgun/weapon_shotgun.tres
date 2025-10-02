@@ -12,39 +12,22 @@
 
 [sub_resource type="Resource" id="Resource_7tkgi"]
 script = ExtResource("1_wls1x")
-duration = 0.3
 metadata/_custom_type_script = "uid://dunv2f27maa0u"
 
 [sub_resource type="Resource" id="Resource_c6d5p"]
 script = ExtResource("1_wls1x")
-duration = 0.3
 metadata/_custom_type_script = "uid://dunv2f27maa0u"
 
 [sub_resource type="Resource" id="Resource_3o6bj"]
 script = ExtResource("3_gleqw")
-max_range = 100.0
-collision_mask = 1
-damage = 10
-spread = 0.0
-projectile_count = 1
 metadata/_custom_type_script = "uid://d28kqn231r4ux"
 
 [sub_resource type="Resource" id="Resource_wvk5t"]
 script = ExtResource("4_ubrss")
-range_value = 0.0
-speed = 1.0
-loop = true
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [sub_resource type="Resource" id="Resource_5eju7"]
 script = ExtResource("4_ubrss")
-range_value = 0.0
-speed = 1.0
-loop = true
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [sub_resource type="Curve" id="Curve_s5ws6"]
@@ -56,7 +39,6 @@ script = ExtResource("4_ubrss")
 range_value = 0.2
 speed = 4.0
 curve = SubResource("Curve_s5ws6")
-loop = true
 random = true
 range_min_max = Vector2(0.1, 0.2)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
@@ -71,26 +53,14 @@ range_value = 0.1
 speed = 2.0
 curve = SubResource("Curve_7tkgi")
 loop = false
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [sub_resource type="Resource" id="Resource_b6err"]
 script = ExtResource("4_ubrss")
-range_value = 0.0
-speed = 1.0
-loop = true
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [sub_resource type="Resource" id="Resource_rtaun"]
 script = ExtResource("4_ubrss")
-range_value = 0.0
-speed = 1.0
-loop = true
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [sub_resource type="Resource" id="Resource_xw2mx"]
@@ -106,61 +76,30 @@ metadata/_custom_type_script = "uid://dunv2f27maa0u"
 
 [sub_resource type="Resource" id="Resource_3dqud"]
 script = ExtResource("4_ubrss")
-range_value = 0.0
-speed = 1.0
-loop = true
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [sub_resource type="Resource" id="Resource_u3y7o"]
 script = ExtResource("4_ubrss")
-range_value = 0.0
-speed = 1.0
-loop = true
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [sub_resource type="Resource" id="Resource_15wjp"]
 script = ExtResource("4_ubrss")
-range_value = 0.0
-speed = 1.0
-loop = true
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [sub_resource type="Resource" id="Resource_6kman"]
 script = ExtResource("4_ubrss")
-range_value = 0.0
-speed = 1.0
-loop = true
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [sub_resource type="Resource" id="Resource_46p7j"]
 script = ExtResource("4_ubrss")
-range_value = 0.0
-speed = 1.0
-loop = true
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [sub_resource type="Resource" id="Resource_4gqd8"]
 script = ExtResource("4_ubrss")
-range_value = 0.0
-speed = 1.0
-loop = true
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [sub_resource type="Resource" id="Resource_wtsfx"]
 script = ExtResource("1_wls1x")
-duration = 0.3
 position_x = SubResource("Resource_3dqud")
 position_y = SubResource("Resource_u3y7o")
 position_z = SubResource("Resource_15wjp")
@@ -171,12 +110,10 @@ metadata/_custom_type_script = "uid://dunv2f27maa0u"
 
 [sub_resource type="Resource" id="Resource_yt58u"]
 script = ExtResource("2_ubrss")
-duration = 0.3
 metadata/_custom_type_script = "uid://bmfb4gjtsaenn"
 
 [sub_resource type="Resource" id="Resource_bb4v1"]
 script = ExtResource("2_ubrss")
-duration = 0.3
 metadata/_custom_type_script = "uid://bmfb4gjtsaenn"
 
 [sub_resource type="Curve" id="Curve_wvk5t"]
@@ -186,12 +123,7 @@ point_count = 3
 
 [sub_resource type="Resource" id="Resource_s5ws6"]
 script = ExtResource("4_ubrss")
-range_value = 0.0
-speed = 1.0
 curve = SubResource("Curve_wvk5t")
-loop = true
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [sub_resource type="Resource" id="Resource_nr1c5"]
@@ -199,22 +131,16 @@ script = ExtResource("4_ubrss")
 range_value = 0.1
 speed = 0.5
 curve = SubResource("Curve_wvk5t")
-loop = true
-random = false
-range_min_max = Vector2(0, 0)
 metadata/_custom_type_script = "uid://dhx0ycgs8vgtv"
 
 [sub_resource type="Resource" id="Resource_hslqq"]
 script = ExtResource("7_s5ws6")
 sway_x = SubResource("Resource_s5ws6")
 sway_y = SubResource("Resource_nr1c5")
-lerp_speed = 5.0
 metadata/_custom_type_script = "uid://meev4qwj1amp"
 
 [sub_resource type="Resource" id="Resource_6302q"]
 script = ExtResource("8_wvk5t")
-range_value = 0.0
-speed = 0.0
 metadata/_custom_type_script = "uid://bci6t46fmlmgi"
 
 [sub_resource type="Resource" id="Resource_eoarf"]
@@ -225,14 +151,10 @@ metadata/_custom_type_script = "uid://bci6t46fmlmgi"
 
 [sub_resource type="Resource" id="Resource_dunkm"]
 script = ExtResource("8_wvk5t")
-range_value = 0.0
-speed = 0.0
 metadata/_custom_type_script = "uid://bci6t46fmlmgi"
 
 [sub_resource type="Resource" id="Resource_2qaxn"]
 script = ExtResource("6_wvk5t")
-position = Vector3(0, 0, 0)
-rotation = Vector3(0, 0, 0)
 bob = SubResource("Resource_hslqq")
 lean = SubResource("Resource_eoarf")
 horizontal_sway = SubResource("Resource_6302q")
@@ -241,31 +163,22 @@ metadata/_custom_type_script = "uid://bwg48j14g8fj0"
 
 [sub_resource type="Resource" id="Resource_m3541"]
 script = ExtResource("7_s5ws6")
-lerp_speed = 5.0
 metadata/_custom_type_script = "uid://meev4qwj1amp"
 
 [sub_resource type="Resource" id="Resource_pi0ba"]
 script = ExtResource("8_wvk5t")
-range_value = 0.0
-speed = 0.0
 metadata/_custom_type_script = "uid://bci6t46fmlmgi"
 
 [sub_resource type="Resource" id="Resource_c43bu"]
 script = ExtResource("8_wvk5t")
-range_value = 0.0
-speed = 0.0
 metadata/_custom_type_script = "uid://bci6t46fmlmgi"
 
 [sub_resource type="Resource" id="Resource_ev1mw"]
 script = ExtResource("8_wvk5t")
-range_value = 0.0
-speed = 0.0
 metadata/_custom_type_script = "uid://bci6t46fmlmgi"
 
 [sub_resource type="Resource" id="Resource_os4yl"]
 script = ExtResource("6_wvk5t")
-position = Vector3(0, 0, 0)
-rotation = Vector3(0, 0, 0)
 bob = SubResource("Resource_m3541")
 lean = SubResource("Resource_c43bu")
 horizontal_sway = SubResource("Resource_pi0ba")
@@ -276,19 +189,8 @@ metadata/_custom_type_script = "uid://bwg48j14g8fj0"
 script = ExtResource("1_6bpku")
 view_model = ExtResource("5_s5ws6")
 projectile = SubResource("Resource_3o6bj")
-max_ammo = 120
-is_automatic = false
-rate_of_fire = 0.5
-projectile_count = 1
-damage = 10
-base_spread = 0.0
-max_spread = 0.2
-spread_increase_per_shot = 0.0
-spread_recovery_speed = 0.5
 anim_equip = SubResource("Resource_7tkgi")
 anim_holster = SubResource("Resource_c6d5p")
-idle_position_offset = Vector3(0, 0, 0)
-idle_rotation_offset = Vector3(0, 0, 0)
 view_model_animation = SubResource("Resource_2qaxn")
 view_model_animation_aiming = SubResource("Resource_os4yl")
 recoil_anim = SubResource("Resource_xw2mx")

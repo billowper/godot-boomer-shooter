@@ -123,7 +123,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 	if not was_grounded and is_on_floor():
-#		print("Landed")
+#		LEG_Log.log("Landed")
 		landed.emit()
 
 func update_crouch_state(delta: float) -> void:
@@ -168,7 +168,7 @@ func jump(jump_type: JumpTypes, delta: float) -> void:
 	if jump_type == JumpTypes.None:
 		return
 
-	print("jumped:", jump_type)
+	LEG_Log.log("jumped: %s" % jump_type)
 
 	match jump_type:
 		JumpTypes.Normal:
@@ -251,7 +251,7 @@ func try_find_ledge(origin: Vector3, delta: float) -> bool:
 
 		# ledge is below us, early out
 		if ledge.get_midpoint().y <= origin.y:
-			print("ledge is below us, skipping")
+			LEG_Log.log("ledge is below us, skipping")
 			return false
 
 		var pos_flat = origin * Vector3(1, 0, 1)
@@ -263,7 +263,7 @@ func try_find_ledge(origin: Vector3, delta: float) -> bool:
 		if can_step:
 			if (vertical_distance < (step_height if is_on_floor() else step_height_air) and horiz_distance <= (vertical_distance + (collision_default.shape.radius * 4))):
 				stepping_ledge = ledge
-				print("found step")
+				LEG_Log.log("found step")
 				update_step_movement(delta)
 				return true
 
@@ -272,7 +272,7 @@ func try_find_ledge(origin: Vector3, delta: float) -> bool:
 		var can_climb = not is_on_floor() and climb_requested and ledge_in_range and ledge_high_enough
 		if can_climb:
 			climbing_ledge = ledge
-			print("found climbing ledge")
+			LEG_Log.log("found climbing ledge")
 			if show_ledge_debug:
 				DebugDraw3D.draw_line(ledge.get_midpoint(), ledge.get_midpoint() + Vector3.UP, Color.BLUE, 5)
 			return true
@@ -299,7 +299,7 @@ func update_step_movement(delta: float) -> void:
 		var origin = global_position
 		origin.y = stepping_ledge.get_midpoint().y
 		stepping_ledge = null
-		print("step complete")
+		LEG_Log.log("step complete")
 		if !try_find_ledge(origin, delta):
 			velocity += Vector3.DOWN * gravity
 			move_and_slide()
@@ -309,7 +309,7 @@ func update_climb_movement(delta: float) -> void:
 
 	if not climb_requested:
 		climbing_ledge = null
-		print("stopped climbing ledge")
+		LEG_Log.log("stopped climbing ledge")
 		return
 
 	var dir_to_ledge = (climbing_ledge.get_midpoint() * Vector3(1, 0, 1)) - (global_position * Vector3(1, 0, 1))
@@ -329,7 +329,7 @@ func update_climb_movement(delta: float) -> void:
 		velocity += Vector3.DOWN * gravity
 		move_and_slide()
 		apply_floor_snap()
-		print("finished climbing ledge")
+		LEG_Log.log("finished climbing ledge")
 		return
 
 	move_and_slide()

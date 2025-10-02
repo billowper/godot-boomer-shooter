@@ -11,8 +11,8 @@ config_version=5
 [application]
 
 config/name="Boomer Shooter"
-run/main_scene="uid://bngbc1nqwmgfs"
-config/features=PackedStringArray("4.4", "Forward Plus")
+run/main_scene="uid://crs0fgkx00p3e"
+config/features=PackedStringArray("4.5", "Forward Plus")
 boot_splash/show_image=false
 boot_splash/fullsize=false
 boot_splash/use_filter=false
@@ -20,17 +20,14 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-GM="*res://scripts/game_manager.gd"
 ImGuiRoot="*res://addons/imgui-godot/data/ImGuiRoot.tscn"
+LEG_Console="*res://addons/leg_console/LEG_Console.tscn"
+LEG_Log="*res://addons/leg_log/LEG_Log.gd"
+Game="*res://scenes/game.tscn"
 
 [debug_draw_3d]
 
 settings/addon_root_folder="res://addons/debug_draw_3d"
-
-[display]
-
-window/size/viewport_width=800
-window/size/viewport_height=600
 
 [dotnet]
 
@@ -38,7 +35,7 @@ project/assembly_name="New Game Project"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/func_godot/plugin.cfg", "res://addons/imgui-godot/plugin.cfg", "res://addons/leg_ai/plugin.cfg", "res://addons/signal_gizmo/plugin.cfg")
+enabled=PackedStringArray("res://addons/func_godot/plugin.cfg", "res://addons/imgui-godot/plugin.cfg", "res://addons/leg_ai/plugin.cfg", "res://addons/leg_console/plugin.cfg", "res://addons/leg_log/plugin.cfg", "res://addons/signal_gizmo/plugin.cfg")
 
 [global_group]
 

@@ -1009,7 +1009,7 @@ billboard_keep_scale = true
 [sub_resource type="QuadMesh" id="QuadMesh_w07xk"]
 size = Vector2(0.02, 0.3)
 
-[node name="Node3D" type="Node3D"]
+[node name="Map-M1" type="Node3D"]
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = SubResource("NavigationMesh_8d14l")

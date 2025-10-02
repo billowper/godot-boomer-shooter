@@ -1,0 +1,150 @@
+[gd_scene load_steps=9 format=3 uid="uid://ctgc8nbr8y6aq"]
+
+[ext_resource type="Theme" uid="uid://b7swbd74v2kf" path="res://addons/leg_console/LowEndConsole_Theme.tres" id="1_2ajy5"]
+[ext_resource type="Script" uid="uid://c3a4x12n7s7oc" path="res://addons/leg_console/LowEndConsole.gd" id="1_vxpr8"]
+[ext_resource type="Script" uid="uid://uqecescp0f07" path="res://addons/leg_console/LowEndConsole_Window.gd" id="3_t3xkh"]
+[ext_resource type="Script" uid="uid://bwou7aeygsb48" path="res://addons/leg_console/LowEndConsole_Overlay.gd" id="4_j7siv"]
+[ext_resource type="FontFile" uid="uid://cgtffa25ffl54" path="res://fonts/SourceCodePro-VariableFont_wght.ttf" id="4_v4dhh"]
+
+[sub_resource type="FontVariation" id="FontVariation_r0fcx"]
+base_font = ExtResource("4_v4dhh")
+variation_embolden = 1.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v4dhh"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+draw_center = false
+
+[sub_resource type="FontVariation" id="FontVariation_i4pgp"]
+base_font = ExtResource("4_v4dhh")
+variation_embolden = 1.0
+
+[node name="PvkkConsole" type="Node"]
+process_mode = 3
+script = ExtResource("1_vxpr8")
+
+[node name="MainConsole" type="CanvasLayer" parent="."]
+layer = 10
+script = ExtResource("3_t3xkh")
+
+[node name="Root" type="PanelContainer" parent="MainConsole"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 500.0
+grow_horizontal = 2
+theme = ExtResource("1_2ajy5")
+
+[node name="ColorRect" type="ColorRect" parent="MainConsole/Root"]
+layout_mode = 2
+color = Color(0, 0, 0, 0.83137256)
+
+[node name="PanelContainer" type="PanelContainer" parent="MainConsole/Root"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainConsole/Root/PanelContainer"]
+layout_mode = 2
+
+[node name="Header" type="PanelContainer" parent="MainConsole/Root/PanelContainer/VBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MainConsole/Root/PanelContainer/VBoxContainer/Header"]
+layout_mode = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="Label" type="Label" parent="MainConsole/Root/PanelContainer/VBoxContainer/Header/MarginContainer"]
+layout_mode = 2
+text = "PVKK Console"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainConsole/Root/PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MainConsole/Root/PanelContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="Output" type="RichTextLabel" parent="MainConsole/Root/PanelContainer/VBoxContainer/ScrollContainer/MarginContainer"]
+layout_mode = 2
+focus_mode = 2
+theme_override_fonts/normal_font = ExtResource("4_v4dhh")
+theme_override_fonts/bold_font = SubResource("FontVariation_r0fcx")
+theme_override_fonts/bold_italics_font = ExtResource("4_v4dhh")
+theme_override_fonts/italics_font = ExtResource("4_v4dhh")
+theme_override_fonts/mono_font = ExtResource("4_v4dhh")
+theme_override_font_sizes/normal_font_size = 18
+fit_content = true
+scroll_following = true
+vertical_alignment = 2
+selection_enabled = true
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false
+
+[node name="InputContainer" type="MarginContainer" parent="MainConsole/Root/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 2
+
+[node name="Input" type="LineEdit" parent="MainConsole/Root/PanelContainer/VBoxContainer/InputContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_v4dhh")
+theme_override_font_sizes/font_size = 18
+placeholder_text = "Enter command here..."
+keep_editing_on_text_submit = true
+clear_button_enabled = true
+caret_blink = true
+
+[node name="PopoutToggle" type="CheckButton" parent="MainConsole/Root"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+text = "Popout"
+
+[node name="PopoutWindow" type="Window" parent="MainConsole"]
+oversampling_override = 1.0
+title = "PVKK Console"
+initial_position = 1
+size = Vector2i(500, 300)
+visible = false
+always_on_top = true
+force_native = true
+
+[node name="OverlayConsole" type="CanvasLayer" parent="."]
+script = ExtResource("4_j7siv")
+
+[node name="Root" type="PanelContainer" parent="OverlayConsole"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 20.0
+offset_top = 15.0
+offset_right = 20.0
+offset_bottom = 115.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_v4dhh")
+
+[node name="Output" type="RichTextLabel" parent="OverlayConsole/Root"]
+layout_mode = 2
+theme_override_fonts/normal_font = ExtResource("4_v4dhh")
+theme_override_fonts/bold_font = SubResource("FontVariation_i4pgp")
+theme_override_fonts/bold_italics_font = ExtResource("4_v4dhh")
+theme_override_fonts/italics_font = ExtResource("4_v4dhh")
+theme_override_fonts/mono_font = ExtResource("4_v4dhh")
+text = "TEST"
+scroll_following = true
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false

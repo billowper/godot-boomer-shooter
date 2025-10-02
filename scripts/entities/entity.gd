@@ -18,7 +18,7 @@ func take_hit(source: Entity, origin: Vector3, direction: Vector3, damage: int) 
 	if not is_alive():
 		return
 
-	print("Entity %s took hit from %s with damage %d" % [self.name, source, damage])
+	LEG_Log.log("Entity %s took hit from %s with damage %d" % [self.name, source, damage])
 	
 	if damage_sound:
 		play_sound(damage_sound)

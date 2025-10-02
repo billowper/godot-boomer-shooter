@@ -69,7 +69,7 @@ func _think(delta: float) -> void:
 		if status != AI_Schedule.ExecutionStatus.Running:
 			_last_schedule = _active_schedule
 			var next_schedule = _active_schedule.get_next(status)
-			print(name + " schedule finished: " + _active_schedule._name + " with status: " + str(status) + " next: " + (next_schedule._name if next_schedule else "null"))
+			LEG_Log.log(name + " schedule finished: " + _active_schedule._name + " with status: " + str(status) + " next: " + (next_schedule._name if next_schedule else "null"))
 			_active_schedule.stop(self)
 			if next_schedule:
 				_set_active_schedule(next_schedule)
@@ -96,7 +96,7 @@ func _animate(_delta: float) -> void:
 func _set_active_schedule(schedule: AI_Schedule) -> void:
 	_active_schedule = schedule
 	if _active_schedule != null:
-		print(name + " new schedule: " + _active_schedule._name)
+		LEG_Log.log(name + " new schedule: " + _active_schedule._name)
 		_active_schedule.start(self)
 
 func _on_heard_sound(sound_location: Vector3) -> void:

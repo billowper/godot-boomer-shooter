@@ -104,7 +104,7 @@ func try_use_entity(entity: Entity) -> void:
 		actor.play_sound(use_attempt_sound)
 		return
 	entity.use()
-	print("used " + entity.name)
+	LEG_Log.log("used " + entity.name)
 			 
 func on_weapon_fired(weapon: Weapon) -> void:
 	# var recoil_anim = weapon.recoil_view_aiming_anim if is_aiming else weapon.recoil_view_anim

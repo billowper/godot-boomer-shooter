@@ -77,26 +77,26 @@ func with_condition(condition: AI_Condition) -> AI_Schedule:
 func evaluate(_user: AI_Actor) -> bool:
 
 	if _no_repeat and _user._last_schedule == self:
-		print(_name + " is set to no repeat, skipping evaluation")
+		LEG_Log.log(_name + " is set to no repeat, skipping evaluation")
 		return false
 
 	if not _is_valid:
-		print(_name + " is not valid, skipping evaluation")
+		LEG_Log.log(_name + " is not valid, skipping evaluation")
 		return false
 
 	if _cooldown and _time_since_active.get_elapsed_time() < _cooldown.call() as float:
-		print(_name + " is on cooldown, elapsed: " + str(_time_since_active.get_elapsed_time()) + ", cooldown: " + str(_cooldown))
+		LEG_Log.log(_name + " is on cooldown, elapsed: " + str(_time_since_active.get_elapsed_time()) + ", cooldown: " + str(_cooldown))
 		return false
 
 	for condition in _conditions:
 		if not condition.check(_user):
-			print(_name + " failed condition: " + condition.name)
+			LEG_Log.log(_name + " failed condition: " + condition.name)
 			return false
 
 	for entry in _break_conditions:
 		var condition = entry.condition as AI_Condition
 		if condition.check(_user):
-			print(_name + " failed break condition: " + condition.name)
+			LEG_Log.log(_name + " failed break condition: " + condition.name)
 			return false
 
 	return true
@@ -112,7 +112,7 @@ func start(_user: AI_Actor)	-> void:
 	_last_break_condition = null
 	var action = _actions[_action_index] as AI_Action
 	action.start(_user)
-	print(_name + " started | action: " + action.to_string())
+	LEG_Log.log(_name + " started | action: " + action.to_string())
 
 func stop(_user: AI_Actor) -> void:
 
@@ -134,7 +134,7 @@ func execute(_user: AI_Actor, delta: float) -> AI_Schedule.ExecutionStatus:
 		var condition = entry.condition as AI_Condition
 		if condition.check(_user):
 			action.on_stop(_user)
-			print(_name + " hit break condition: " + condition.name)
+			LEG_Log.log(_name + " hit break condition: " + condition.name)
 			_last_break_condition = entry
 			status = ExecutionStatus.Break
 			return status
@@ -146,7 +146,7 @@ func execute(_user: AI_Actor, delta: float) -> AI_Schedule.ExecutionStatus:
 			action_status = action.execute(_user, delta)
 
 		if action_status == ExecutionStatus.Complete:
-			print(_name + " action " + str(_action_index + 1) + "/" + str(_actions.size()) + " completed: " + action.to_string())
+			LEG_Log.log(_name + " action " + str(_action_index + 1) + "/" + str(_actions.size()) + " completed: " + action.to_string())
 			action.on_stop(_user)
 			_action_index += 1
 			if _action_index >= _actions.size():
@@ -155,6 +155,6 @@ func execute(_user: AI_Actor, delta: float) -> AI_Schedule.ExecutionStatus:
 			action = _actions[_action_index]
 			action.start(_user)
 			action.on_execute(_user)
-			print(_name + " action " + str(_action_index + 1) + "/" + str(_actions.size()) + " started: " + action.to_string())
+			LEG_Log.log(_name + " action " + str(_action_index + 1) + "/" + str(_actions.size()) + " started: " + action.to_string())
 
 	return status

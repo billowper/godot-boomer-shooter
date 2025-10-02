@@ -1,6 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://8t01mswovpsr"]
-
-[ext_resource type="Script" uid="uid://b8eeqg63vh85e" path="res://scripts/main_menu.gd" id="1_ahhtf"]
+[gd_scene load_steps=2 format=3 uid="uid://8t01mswovpsr"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_ahhtf"]
 font_size = 24
@@ -13,7 +11,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_ahhtf")
+mouse_filter = 2
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1

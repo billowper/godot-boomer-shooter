@@ -25,8 +25,8 @@ func create(
 		var hit_position = result.position
 		var hit_normal = result.normal
 		var collider = result.collider
-		
-		print("hit object: ", collider)
+
+		LEG_Log.log("hit object: %s" % collider)
 		DebugDraw3D.draw_line(origin, hit_position, Color.RED, 1.0)
 
 		var hit_entity = Utils.find_entity_in_children(collider)
