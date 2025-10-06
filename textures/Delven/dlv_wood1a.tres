@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://c1yaofpj2i730"]
+
+[ext_resource type="Texture2D" uid="uid://d6twfvr1cg8x" path="res://textures/Delven/dlv_wood1a.png" id="1_w73u5"]
+
+[resource]
+albedo_texture = ExtResource("1_w73u5")
+metallic_specular = 0.0
+texture_filter = 2

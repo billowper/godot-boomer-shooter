@@ -1,8 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bi8appmhc0m8e"]
-
-[ext_resource type="Texture2D" uid="uid://cad7iw0kef0fv" path="res://textures/sw/sw_ceil01.png" id="1_7j6j0"]
-
-[resource]
-albedo_texture = ExtResource("1_7j6j0")
-metallic_specular = 0.0
-texture_filter = 2

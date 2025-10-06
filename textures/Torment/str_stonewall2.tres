@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://c3acpypqnj6o6"]
+
+[ext_resource type="Texture2D" uid="uid://dj6viofmd6y3x" path="res://textures/Torment/str_stonewall2.png" id="1_rkodx"]
+
+[resource]
+albedo_texture = ExtResource("1_rkodx")
+metallic_specular = 0.0
+texture_filter = 2

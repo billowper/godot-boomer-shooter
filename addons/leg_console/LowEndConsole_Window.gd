@@ -31,7 +31,6 @@ func show():
 		_root.size = $PopoutWindow.size
 		$PopoutWindow.grab_focus()
 
-
 func hide():
 	_input.clear()
 	_input.text_changed.disconnect(_on_input_changed)
@@ -47,6 +46,9 @@ func toggle():
 
 func is_visible() -> bool:
 	return _root.visible
+
+func has_focus() -> bool:
+	return is_visible() and (not _windowed or $PopoutWindow.has_focus())
 
 func _enter_tree() -> void:
 	LEG_Console.log_added.connect(add_log)

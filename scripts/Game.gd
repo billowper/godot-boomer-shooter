@@ -34,11 +34,25 @@ func _ready() -> void:
 	LEG_Console.add_command("join", join_game, true)
 	LEG_Console.add_command("map", load_map, true)
 
+	await get_tree().process_frame # wait for everything to be ready
+
+	var existing_map = get_tree().get_first_node_in_group("maps")
+	if (existing_map != null):
+		LEG_Log.log("Found existing map, using it")
+		game_state = GameState.LOADING
+		%UI.remove_child(menu_scene)
+		current_map_scene = existing_map
+		current_map_scene.process_mode = PROCESS_MODE_PAUSABLE
+		%GameWorld.add_child(current_map_scene, true)
+		game_state = GameState.PLAYING
+		await get_tree().physics_frame 
+		post_map_load()
+
 func _on_peer_connected() -> void:
-	LEG_Console.add_log("peer connected", LEG_Console.MessageType.Info)
+	LEG_Log.log("peer connected")
 
 func _on_peer_disconnected() -> void:
-	LEG_Console.add_log("peer disconnected", LEG_Console.MessageType.Info)
+	LEG_Log.log("peer disconnected")
 
 func is_playing() -> bool:
 	return game_state == GameState.PLAYING
@@ -168,7 +182,9 @@ func _process(_delta):
 		_debug_show_cursor = not _debug_show_cursor
 
 func get_desired_mouse_mode() -> int:
-	if _debug_show_cursor or LEG_Console.MainWindow.is_visible() or game_state == GameState.PAUSED or game_state == GameState.MAIN_MENU: 
+	if _debug_show_cursor or (LEG_Console.MainWindow.has_focus()) \
+		or game_state == GameState.PAUSED \
+		or game_state == GameState.MAIN_MENU: 
 		return Input.MOUSE_MODE_VISIBLE
 	elif game_state == GameState.PLAYING:
 		return Input.MOUSE_MODE_CAPTURED

@@ -1,0 +1,14 @@
+[remap]
+
+importer="func_godot.map"
+type="Resource"
+uid="uid://2di43wjsfu17"
+path="res://.godot/imported/pultney.map-5031f5b7cceb338379bef4937b555c9b.tres"
+
+[deps]
+
+source_file="res://maps/pultney.map"
+dest_files=["res://.godot/imported/pultney.map-5031f5b7cceb338379bef4937b555c9b.tres"]
+
+[params]
+

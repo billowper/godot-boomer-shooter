@@ -1,5 +1,5 @@
 class_name PlayerWeapons
-extends Node
+extends Node3D
 
 @export var player_audio: PlayerAudio
 @export var player_camera: PlayerCamera

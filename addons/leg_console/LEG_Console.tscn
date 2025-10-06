@@ -125,6 +125,7 @@ always_on_top = true
 force_native = true
 
 [node name="OverlayConsole" type="CanvasLayer" parent="."]
+visible = false
 script = ExtResource("4_j7siv")
 
 [node name="Root" type="PanelContainer" parent="OverlayConsole"]
